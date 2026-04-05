@@ -94,8 +94,11 @@ export const GenerateSentencesPage = () => {
         </div>
       </aside>
 
-      {/* ── Main ── */}
-      <div className="flex-1 lg:ml-56 min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* ── Main + Right ── */}
+      <div className="flex-1 lg:ml-56 flex min-h-screen">
+
+        {/* Main */}
+        <div className="flex-1 min-w-0 bg-gray-50 dark:bg-gray-900">
 
         {/* Mobile header */}
         <header className="lg:hidden flex items-center justify-between px-4 py-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
@@ -185,6 +188,11 @@ export const GenerateSentencesPage = () => {
           )}
 
         </main>
+        </div>
+
+        {/* ── Right Sidebar (empty) ── */}
+        <aside className="hidden xl:block w-72 shrink-0 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900" />
+
       </div>
     </div>
   );

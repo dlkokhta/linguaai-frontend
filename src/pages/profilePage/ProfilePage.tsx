@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown, LayoutDashboard, Lock, LogOut, Save, Settings, Shield, ShieldCheck, ShieldOff, User, Wand2 } from "lucide-react";
+import { ChevronDown, LayoutDashboard, Loader2, Lock, LogOut, Save, Settings, Shield, ShieldCheck, ShieldOff, User, Wand2 } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 
@@ -47,7 +47,32 @@ export const ProfilePage = () => {
   const [twoFactorSuccess, setTwoFactorSuccess] = useState<string | null>(null);
 
   const [openSection, setOpenSection] = useState<"profile" | "password" | "2fa" | null>(null);
-  const [activeTab, setActiveTab] = useState<"overview" | "settings">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "settings" | "generate">("overview");
+
+  // Generate Sentences
+  const [genTopic, setGenTopic] = useState("");
+  const [genDifficulty, setGenDifficulty] = useState<"beginner" | "intermediate" | "advanced">("intermediate");
+  const [genSentences, setGenSentences] = useState<string[]>([]);
+  const [genLoading, setGenLoading] = useState(false);
+  const [genError, setGenError] = useState<string | null>(null);
+
+  const handleGenerate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setGenLoading(true);
+    setGenError(null);
+    setGenSentences([]);
+    try {
+      const res = await axiosInstance.post<{ sentences: string[] }>("/generate/sentences", {
+        topic: genTopic,
+        difficulty: genDifficulty,
+      });
+      setGenSentences(res.data.sentences);
+    } catch {
+      setGenError("Failed to generate sentences. Please try again.");
+    } finally {
+      setGenLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -234,8 +259,12 @@ export const ProfilePage = () => {
           <div className="space-y-0.5">
             <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-2 mb-1">Practice</p>
             <button
-              onClick={() => navigate(ROUTES.GenerateSentences)}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              onClick={() => setActiveTab("generate")}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === "generate"
+                  ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400"
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+              }`}
             >
               <Wand2 size={16} />
               Generate Sentences
@@ -253,9 +282,14 @@ export const ProfilePage = () => {
           </button>
         </div>
       </aside>
+      
 
-      {/* ── Main ── */}
-      <div className="flex-1 lg:ml-56 min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* ── Main + Right ── */}
+      <div className="flex-1 lg:ml-56 flex min-h-screen">
+
+        {/* Main */}
+        <div className="flex-1 min-w-0 bg-gray-50 dark:bg-gray-900">
+        
 
         {/* Mobile header */}
         <header className="lg:hidden flex items-center justify-between px-4 py-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
@@ -287,14 +321,21 @@ export const ProfilePage = () => {
             </button>
           ))}
           <button
-            onClick={() => navigate(ROUTES.GenerateSentences)}
-            className="flex-1 py-3 text-sm font-medium whitespace-nowrap px-3 text-gray-500 dark:text-gray-400 hover:text-emerald-600 transition-colors"
+            onClick={() => setActiveTab("generate")}
+            className={`flex-1 py-3 text-sm font-medium whitespace-nowrap px-3 transition-colors ${
+              activeTab === "generate"
+                ? "text-emerald-600 border-b-2 border-emerald-500"
+                : "text-gray-500 dark:text-gray-400"
+            }`}
           >
             Generate
           </button>
         </div>
 
         <main className="px-4 sm:px-6 py-6 max-w-2xl mx-auto space-y-4">
+
+
+          
 
           {/* ── OVERVIEW TAB ── */}
           {activeTab === "overview" && (
@@ -346,6 +387,9 @@ export const ProfilePage = () => {
               </div>
             </>
           )}
+
+
+          
 
           {/* ── SETTINGS TAB ── */}
           {activeTab === "settings" && (
@@ -521,6 +565,8 @@ export const ProfilePage = () => {
                       </>
                     )}
 
+                    
+
                     {profile?.isTwoFactorEnabled && (
                       <>
                         {!twoFactorSetupMode ? (
@@ -561,8 +607,156 @@ export const ProfilePage = () => {
             </div>
           )}
 
+          {/* ── GENERATE TAB ── */}
+          {activeTab === "generate" && (
+            <>
+              <div className="mb-2">
+                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Generate Sentences</h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                  Enter a topic or keyword to get example sentences for practice.
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 sm:p-6">
+                <form onSubmit={handleGenerate} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                      Topic or keyword
+                    </label>
+                    <input
+                      type="text"
+                      value={genTopic}
+                      onChange={(e) => setGenTopic(e.target.value)}
+                      placeholder="e.g. travel, weather, food…"
+                      className="w-full px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white dark:placeholder:text-gray-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                      Difficulty
+                    </label>
+                    <select
+                      value={genDifficulty}
+                      onChange={(e) => setGenDifficulty(e.target.value as typeof genDifficulty)}
+                      className="w-full px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
+                    >
+                      <option value="beginner">Beginner</option>
+                      <option value="intermediate">Intermediate</option>
+                      <option value="advanced">Advanced</option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={genLoading || !genTopic.trim()}
+                    className="cursor-pointer flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-5 py-2.5 text-sm rounded-xl font-medium disabled:opacity-60 transition-all"
+                  >
+                    {genLoading ? <Loader2 size={14} className="animate-spin" /> : <Wand2 size={14} />}
+                    {genLoading ? "Generating…" : "Generate Sentences"}
+                  </button>
+                </form>
+              </div>
+
+              {genError && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+                  <p className="text-sm text-red-600 dark:text-red-400">{genError}</p>
+                </div>
+              )}
+
+              {genSentences.length > 0 && (
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 sm:p-6">
+                  <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Generated Sentences</h2>
+                  <ol className="space-y-2.5">
+                    {genSentences.map((s, i) => (
+                      <li key={i} className="flex gap-3">
+                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                          {i + 1}
+                        </span>
+                        <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">{s}</p>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+            </>
+          )}
+
         </main>
+        
+        </div>
+
+        {/* ── Right Sidebar ── */}
+        <aside className="hidden xl:flex xl:w-72 flex-col sticky top-0 h-screen border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shrink-0 overflow-y-auto">
+          <div className="flex flex-col gap-3 p-3">
+
+            {/* Word of the Day */}
+            <div className="rounded-2xl bg-[#0a2218] p-4 text-white">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-300 mb-2">Word of the Day</p>
+              <h3 className="text-2xl font-serif font-bold mb-0.5">Eloquent</h3>
+              <p className="text-sm italic text-emerald-300 mb-2">adjective</p>
+              <p className="text-xs leading-relaxed text-emerald-100 mb-3">
+                Fluent and persuasive in speaking or writing; clearly expressing ideas.
+              </p>
+              <blockquote className="border-l-2 border-emerald-400 pl-3 text-xs italic text-emerald-200">
+                "She gave an eloquent speech that moved the entire audience."
+              </blockquote>
+            </div>
+
+            {/* This Week */}
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500 mb-3">This Week</p>
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-3 text-center">
+                  <p className="text-2xl font-bold text-emerald-500">48</p>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400">Sentences</p>
+                </div>
+                <div className="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-3 text-center">
+                  <p className="text-2xl font-bold text-emerald-500">23</p>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400">New Words</p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div>
+                  <div className="flex justify-between text-[11px] text-gray-500 dark:text-gray-400 mb-1">
+                    <span>Weekly Goal</span><span>60%</span>
+                  </div>
+                  <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-full w-[60%] bg-emerald-500 rounded-full" />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-[11px] text-gray-500 dark:text-gray-400 mb-1">
+                    <span>Practice Sessions</span><span>80%</span>
+                  </div>
+                  <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-full w-[80%] bg-emerald-500 rounded-full" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Practice */}
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-emerald-50 dark:bg-gray-800 p-4">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500 mb-3">Quick Practice</p>
+              <p className="text-sm text-gray-700 dark:text-gray-200 mb-3">
+                I am a <span className="inline-block w-16 border-b-2 border-gray-400 align-bottom" /> developer based in Georgia.
+              </p>
+              <input
+                type="text"
+                placeholder="Fill in the blank..."
+                className="w-full px-3 py-2 text-sm rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 mb-3"
+              />
+              <button className="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors">
+                Check Answer
+              </button>
+            </div>
+
+          </div>
+        </aside>
+
       </div>
+      
     </div>
   );
 };
