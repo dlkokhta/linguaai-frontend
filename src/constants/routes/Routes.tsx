@@ -3,6 +3,7 @@ export const ROUTES = {
   Register: "/register",
   Login: "/login",
   Profile: "/profile",
+  GenerateSentences: "/generate-sentences",
   GoogleAuthSuccess: "/auth/success",
   Welcome: "/welcome",
   VerifyEmail: "/auth/verify-email",

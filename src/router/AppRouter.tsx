@@ -13,6 +13,7 @@ import { ForgotPasswordPage } from "../pages/forgotPasswordPage";
 import { ResetPasswordPage } from "../pages/resetPasswordPage";
 import { AdminPage } from "../pages/adminPage";
 import { TwoFactorVerifyPage } from "../pages/twoFactorVerifyPage";
+import { GenerateSentencesPage } from "../pages/generateSentencesPage";
 
 export const AppRouter = () => {
   return (
@@ -41,6 +42,14 @@ export const AppRouter = () => {
       <Route path={ROUTES.PasswordRecovery} element={<ForgotPasswordPage />} />
       <Route path={ROUTES.ResetPassword} element={<ResetPasswordPage />} />
       <Route path={ROUTES.TwoFactorVerify} element={<TwoFactorVerifyPage />} />
+      <Route
+        path={ROUTES.GenerateSentences}
+        element={
+          <ProtectedRoute>
+            <GenerateSentencesPage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path={ROUTES.AdminPanel}
         element={
