@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown, LayoutDashboard, Loader2, Lock, LogOut, Save, Settings, Shield, ShieldCheck, ShieldOff, User, Wand2 } from "lucide-react";
+import { ChevronDown, LayoutDashboard, Lock, LogOut, Save, Settings, Shield, ShieldCheck, ShieldOff, User, Wand2 } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 
@@ -47,32 +47,7 @@ export const ProfilePage = () => {
   const [twoFactorSuccess, setTwoFactorSuccess] = useState<string | null>(null);
 
   const [openSection, setOpenSection] = useState<"profile" | "password" | "2fa" | null>(null);
-  const [activeTab, setActiveTab] = useState<"overview" | "settings" | "generate">("overview");
-
-  // Generate Sentences
-  const [genTopic, setGenTopic] = useState("");
-  const [genDifficulty, setGenDifficulty] = useState<"beginner" | "intermediate" | "advanced">("intermediate");
-  const [genSentences, setGenSentences] = useState<string[]>([]);
-  const [genLoading, setGenLoading] = useState(false);
-  const [genError, setGenError] = useState<string | null>(null);
-
-  const handleGenerate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setGenLoading(true);
-    setGenError(null);
-    setGenSentences([]);
-    try {
-      const res = await axiosInstance.post<{ sentences: string[] }>("/generate/sentences", {
-        topic: genTopic,
-        difficulty: genDifficulty,
-      });
-      setGenSentences(res.data.sentences);
-    } catch {
-      setGenError("Failed to generate sentences. Please try again.");
-    } finally {
-      setGenLoading(false);
-    }
-  };
+  const [activeTab, setActiveTab] = useState<"overview" | "settings">("overview");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -259,12 +234,8 @@ export const ProfilePage = () => {
           <div className="space-y-0.5">
             <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-2 mb-1">Practice</p>
             <button
-              onClick={() => setActiveTab("generate")}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === "generate"
-                  ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400"
-                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
-              }`}
+              onClick={() => navigate(ROUTES.GenerateSentences)}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               <Wand2 size={16} />
               Generate Sentences
@@ -321,12 +292,8 @@ export const ProfilePage = () => {
             </button>
           ))}
           <button
-            onClick={() => setActiveTab("generate")}
-            className={`flex-1 py-3 text-sm font-medium whitespace-nowrap px-3 transition-colors ${
-              activeTab === "generate"
-                ? "text-emerald-600 border-b-2 border-emerald-500"
-                : "text-gray-500 dark:text-gray-400"
-            }`}
+            onClick={() => navigate(ROUTES.GenerateSentences)}
+            className="flex-1 py-3 text-sm font-medium whitespace-nowrap px-3 text-gray-500 dark:text-gray-400 transition-colors"
           >
             Generate
           </button>
@@ -607,80 +574,7 @@ export const ProfilePage = () => {
             </div>
           )}
 
-          {/* ── GENERATE TAB ── */}
-          {activeTab === "generate" && (
-            <>
-              <div className="mb-2">
-                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Generate Sentences</h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                  Enter a topic or keyword to get example sentences for practice.
-                </p>
-              </div>
 
-              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 sm:p-6">
-                <form onSubmit={handleGenerate} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                      Topic or keyword
-                    </label>
-                    <input
-                      type="text"
-                      value={genTopic}
-                      onChange={(e) => setGenTopic(e.target.value)}
-                      placeholder="e.g. travel, weather, food…"
-                      className="w-full px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white dark:placeholder:text-gray-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                      Difficulty
-                    </label>
-                    <select
-                      value={genDifficulty}
-                      onChange={(e) => setGenDifficulty(e.target.value as typeof genDifficulty)}
-                      className="w-full px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
-                    >
-                      <option value="beginner">Beginner</option>
-                      <option value="intermediate">Intermediate</option>
-                      <option value="advanced">Advanced</option>
-                    </select>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={genLoading || !genTopic.trim()}
-                    className="cursor-pointer flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-5 py-2.5 text-sm rounded-xl font-medium disabled:opacity-60 transition-all"
-                  >
-                    {genLoading ? <Loader2 size={14} className="animate-spin" /> : <Wand2 size={14} />}
-                    {genLoading ? "Generating…" : "Generate Sentences"}
-                  </button>
-                </form>
-              </div>
-
-              {genError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
-                  <p className="text-sm text-red-600 dark:text-red-400">{genError}</p>
-                </div>
-              )}
-
-              {genSentences.length > 0 && (
-                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 sm:p-6">
-                  <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Generated Sentences</h2>
-                  <ol className="space-y-2.5">
-                    {genSentences.map((s, i) => (
-                      <li key={i} className="flex gap-3">
-                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                          {i + 1}
-                        </span>
-                        <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">{s}</p>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              )}
-            </>
-          )}
 
         </main>
         

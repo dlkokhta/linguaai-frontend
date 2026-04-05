@@ -1,18 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutDashboard, Loader2, LogOut, Settings, Wand2 } from "lucide-react";
+import { Languages, LayoutDashboard, Loader2, LogOut, Settings, Volume2, Wand2 } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
+
+const STORAGE_KEY = "linguaai_generated_sentences";
 
 export const GenerateSentencesPage = () => {
   const navigate = useNavigate();
   const { setAccessToken } = useAuth();
 
-  const [topic, setTopic] = useState("");
-  const [difficulty, setDifficulty] = useState<"beginner" | "intermediate" | "advanced">("intermediate");
-  const [sentences, setSentences] = useState<string[]>([]);
+  const [topic, setTopic] = useState(() => {
+    const saved = sessionStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved).topic ?? "" : "";
+  });
+  const [difficulty, setDifficulty] = useState<"beginner" | "intermediate" | "advanced">(() => {
+    const saved = sessionStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved).difficulty ?? "intermediate" : "intermediate";
+  });
+  const [sentences, setSentences] = useState<{ en: string; ka: string }[]>(() => {
+    const saved = sessionStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved).sentences ?? [] : [];
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [revealedTranslations, setRevealedTranslations] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ topic, difficulty, sentences }));
+  }, [topic, difficulty, sentences]);
+
+  const speakText = (text: string) => {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const toggleTranslation = (index: number) => {
+    setRevealedTranslations((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
 
   const handleLogout = async () => {
     try {
@@ -28,8 +61,9 @@ export const GenerateSentencesPage = () => {
     setLoading(true);
     setError(null);
     setSentences([]);
+    setRevealedTranslations(new Set());
     try {
-      const res = await axiosInstance.post<{ sentences: string[] }>("/generate/sentences", {
+      const res = await axiosInstance.post<{ sentences: { en: string; ka: string }[] }>("/generate/sentences", {
         topic,
         difficulty,
       });
@@ -171,19 +205,46 @@ export const GenerateSentencesPage = () => {
           )}
 
           {sentences.length > 0 && (
-            <div className="space-y-3">
-              <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                Generated sentences
-              </h2>
-              {sentences.map((sentence, i) => (
-                <div
-                  key={i}
-                  className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 px-5 py-4"
-                >
-                  <span className="text-xs font-semibold text-emerald-500 mr-2">{i + 1}.</span>
-                  <span className="text-sm text-gray-800 dark:text-gray-200">{sentence}</span>
-                </div>
-              ))}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 sm:p-6">
+              <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Generated Sentences</h2>
+              <ol className="space-y-3">
+                {sentences.map((s, i) => (
+                  <li key={i} className="rounded-xl border border-gray-100 dark:border-gray-700 p-3">
+                    <div className="flex items-start gap-3">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                        {i + 1}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">{s.en}</p>
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <button
+                            type="button"
+                            onClick={() => speakText(s.en)}
+                            className="cursor-pointer flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
+                            title="Listen"
+                          >
+                            <Volume2 size={13} />
+                            Listen
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => toggleTranslation(i)}
+                            className="cursor-pointer flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                          >
+                            <Languages size={13} />
+                            {revealedTranslations.has(i) ? "Hide" : "Translate"}
+                          </button>
+                        </div>
+                        {revealedTranslations.has(i) && (
+                          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 italic border-l-2 border-emerald-400 pl-3">
+                            {s.ka}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ol>
             </div>
           )}
 
