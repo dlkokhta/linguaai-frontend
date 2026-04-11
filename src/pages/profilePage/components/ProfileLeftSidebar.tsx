@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { LayoutDashboard, LogOut, Settings, Wand2 } from "lucide-react";
+import { Bookmark, LayoutDashboard, LogOut, Settings, Wand2 } from "lucide-react";
 import { ROUTES } from "../../../constants";
 
 interface UserProfile {
@@ -11,8 +11,8 @@ interface UserProfile {
 }
 
 interface Props {
-  activeTab: "overview" | "settings";
-  onTabChange: (tab: "overview" | "settings") => void;
+  activeTab?: "overview" | "settings";
+  onTabChange?: (tab: "overview" | "settings") => void;
   onLogout: () => void;
   profile: UserProfile;
   getInitials: () => string;
@@ -48,7 +48,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
             ] as const).map((item) => (
               <button
                 key={item.id}
-                onClick={() => onTabChange(item.id)}
+                onClick={() => onTabChange?.(item.id)}
                 className={`cursor-pointer w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   activeTab === item.id
                     ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400"
@@ -69,6 +69,13 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
             >
               <Wand2 size={16} />
               Generate Sentences
+            </button>
+            <button
+              onClick={() => navigate(ROUTES.SavedSentences)}
+              className="cursor-pointer w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
+              <Bookmark size={16} />
+              Saved Sentences
             </button>
           </div>
         </nav>
@@ -118,7 +125,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
         {(["overview", "settings"] as const).map((tab) => (
           <button
             key={tab}
-            onClick={() => onTabChange(tab)}
+            onClick={() => onTabChange?.(tab)}
             className={`cursor-pointer flex-1 py-3 text-sm font-medium capitalize whitespace-nowrap px-3 transition-colors ${
               activeTab === tab
                 ? "text-emerald-600 border-b-2 border-emerald-500"

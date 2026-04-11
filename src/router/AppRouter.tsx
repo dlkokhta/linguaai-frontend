@@ -14,6 +14,7 @@ import { ResetPasswordPage } from "../pages/resetPasswordPage";
 import { AdminPage } from "../pages/adminPage";
 import { TwoFactorVerifyPage } from "../pages/twoFactorVerifyPage";
 import { GenerateSentencesPage } from "../pages/generateSentencesPage";
+import { SavedSentencesPage } from "../pages/savedSentencesPage";
 
 export const AppRouter = () => {
   return (
@@ -47,6 +48,14 @@ export const AppRouter = () => {
         element={
           <ProtectedRoute>
             <GenerateSentencesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.SavedSentences}
+        element={
+          <ProtectedRoute>
+            <SavedSentencesPage />
           </ProtectedRoute>
         }
       />

@@ -11,4 +11,5 @@ export const ROUTES = {
   ResetPassword: "/auth/reset-password",
   AdminPanel: "/adminPanel",
   TwoFactorVerify: "/auth/2fa-verify",
+  SavedSentences: "/saved-sentences",
 } as const;
