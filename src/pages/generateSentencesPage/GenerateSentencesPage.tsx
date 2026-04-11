@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Languages, Loader2, Volume2, Wand2 } from "lucide-react";
+import { Bookmark, Languages, Loader2, Volume2, Wand2 } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
@@ -204,6 +204,14 @@ export const GenerateSentencesPage = () => {
                             >
                               <Volume2 size={13} />
                               Listen
+                            </button>
+                            <button
+                              type="button"
+                              className="cursor-pointer flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-gray-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
+                              title="Save sentence"
+                            >
+                              <Bookmark size={13} />
+                              Save
                             </button>
                             <button
                               type="button"
