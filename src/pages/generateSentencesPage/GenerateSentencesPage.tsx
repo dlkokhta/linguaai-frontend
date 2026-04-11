@@ -41,6 +41,7 @@ export const GenerateSentencesPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [revealedTranslations, setRevealedTranslations] = useState<Set<number>>(new Set());
+  const [savedMap, setSavedMap] = useState<Record<number, string>>({});
 
   useEffect(() => {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ topic, difficulty, sentences }));
@@ -90,6 +91,7 @@ export const GenerateSentencesPage = () => {
     setError(null);
     setSentences([]);
     setRevealedTranslations(new Set());
+    setSavedMap({});
     try {
       const res = await axiosInstance.post<{ sentences: { en: string; ka: string }[] }>("/generate/sentences", {
         topic,
@@ -100,6 +102,21 @@ export const GenerateSentencesPage = () => {
       setError("Failed to generate sentences. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSave = async (index: number, sentence: { en: string; ka: string }) => {
+    const savedId = savedMap[index];
+    if (savedId) {
+      await axiosInstance.delete(`/saved-sentences/${savedId}`);
+      setSavedMap((prev) => { const next = { ...prev }; delete next[index]; return next; });
+    } else {
+      const res = await axiosInstance.post<{ id: string }>("/saved-sentences", {
+        en: sentence.en,
+        ka: sentence.ka,
+        topic,
+      });
+      setSavedMap((prev) => ({ ...prev, [index]: res.data.id }));
     }
   };
 
@@ -207,11 +224,16 @@ export const GenerateSentencesPage = () => {
                             </button>
                             <button
                               type="button"
-                              className="cursor-pointer flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium text-gray-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
-                              title="Save sentence"
+                              onClick={() => handleSave(i, s)}
+                              className={`cursor-pointer flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-colors ${
+                                savedMap[i]
+                                  ? "text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                                  : "text-gray-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                              }`}
+                              title={savedMap[i] ? "Unsave" : "Save sentence"}
                             >
-                              <Bookmark size={13} />
-                              Save
+                              <Bookmark size={13} className={savedMap[i] ? "fill-emerald-500" : ""} />
+                              {savedMap[i] ? "Saved" : "Save"}
                             </button>
                             <button
                               type="button"
