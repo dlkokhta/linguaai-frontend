@@ -63,7 +63,7 @@ export const ResetPasswordPage = () => {
           </p>
           <button
             onClick={() => navigate(ROUTES.PasswordRecovery)}
-            className="cursor-pointer text-sky-500 hover:text-sky-600 text-sm"
+            className="cursor-pointer text-green-500 hover:text-green-600 text-sm"
           >
             Request a new link
           </button>
@@ -84,7 +84,7 @@ export const ResetPasswordPage = () => {
           </p>
           <button
             onClick={() => navigate(ROUTES.Login)}
-            className="cursor-pointer w-full bg-blue-500 text-white py-2.5 px-4 text-sm rounded-md hover:bg-blue-600 transition-colors font-medium"
+            className="cursor-pointer w-full bg-green-500 text-white py-2.5 px-4 text-sm rounded-md hover:bg-green-600 transition-colors font-medium"
           >
             Go to login
           </button>
@@ -125,7 +125,7 @@ export const ResetPasswordPage = () => {
                 type="password"
                 {...register("password")}
                 placeholder="Enter new password"
-                className={`w-full pl-10 pr-3 py-2.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 ${
+                className={`w-full pl-10 pr-3 py-2.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 ${
                   errors.password ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                 }`}
               />
@@ -150,7 +150,7 @@ export const ResetPasswordPage = () => {
                 type="password"
                 {...register("passwordRepeat")}
                 placeholder="Confirm new password"
-                className={`w-full pl-10 pr-3 py-2.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 ${
+                className={`w-full pl-10 pr-3 py-2.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 ${
                   errors.passwordRepeat ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                 }`}
               />
@@ -169,7 +169,7 @@ export const ResetPasswordPage = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-blue-500 text-white py-2.5 px-4 text-sm rounded-md hover:bg-blue-600 transition-colors font-medium disabled:opacity-60"
+            className="cursor-pointer w-full bg-blue-500 text-white py-2.5 px-4 text-sm rounded-md hover:bg-blue-600 transition-colors font-medium disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Resetting..." : "Reset password"}
           </button>

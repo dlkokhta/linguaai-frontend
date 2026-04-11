@@ -11,7 +11,7 @@ export const RegistrationSuccess = (props: propsTypes) => {
         <p className="mb-4">{props.message}</p>
         <button
           onClick={props.onClose}
-          className="cursor-pointer rounded-xl bg-yellow-300 px-5 py-2 text-sm hover:bg-yellow-400"
+          className="cursor-pointer rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-5 py-2 text-sm transition-all"
         >
           Close
         </button>

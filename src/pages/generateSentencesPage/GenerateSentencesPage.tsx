@@ -100,7 +100,7 @@ export const GenerateSentencesPage = () => {
               <button
                 key={item.label}
                 onClick={() => navigate(ROUTES.Profile)}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="cursor-pointer w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 {item.icon}
                 {item.label}
@@ -110,7 +110,7 @@ export const GenerateSentencesPage = () => {
 
           <div className="space-y-0.5">
             <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest px-2 mb-1">Practice</p>
-            <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400">
+            <button className="cursor-pointer w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400">
               <Wand2 size={16} />
               Generate Sentences
             </button>
@@ -120,7 +120,7 @@ export const GenerateSentencesPage = () => {
         <div className="px-3 py-4 border-t border-gray-200 dark:border-gray-700">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+            className="cursor-pointer w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
           >
             <LogOut size={16} />
             Logout
@@ -142,7 +142,7 @@ export const GenerateSentencesPage = () => {
             </div>
             <span className="font-semibold text-gray-900 dark:text-white">LinguaAI</span>
           </div>
-          <button onClick={handleLogout} className="flex items-center gap-1.5 text-sm text-red-500 font-medium">
+          <button onClick={handleLogout} className="cursor-pointer flex items-center gap-1.5 text-sm text-red-500 font-medium">
             <LogOut size={15} />
             Logout
           </button>

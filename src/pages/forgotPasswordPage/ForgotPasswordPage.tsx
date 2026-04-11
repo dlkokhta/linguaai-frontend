@@ -51,7 +51,7 @@ export const ForgotPasswordPage = () => {
             </p>
             <button
               onClick={() => navigate(ROUTES.Login)}
-              className="cursor-pointer text-sky-500 hover:text-sky-600 text-sm"
+              className="cursor-pointer text-green-500 hover:text-green-600 text-sm"
             >
               Back to login
             </button>
@@ -94,7 +94,7 @@ export const ForgotPasswordPage = () => {
                 type="email"
                 {...register("email")}
                 placeholder="Enter your email"
-                className={`w-full pl-10 pr-3 py-2.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 ${
+                className={`w-full pl-10 pr-3 py-2.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 ${
                   errors.email ? "border-red-500" : "border-gray-300 dark:border-gray-600"
                 }`}
               />
@@ -110,7 +110,7 @@ export const ForgotPasswordPage = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="cursor-pointer w-full bg-blue-500 text-white py-2.5 px-4 text-sm rounded-md hover:bg-blue-600 transition-colors font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+            className="cursor-pointer w-full bg-green-500 text-white py-2.5 px-4 text-sm rounded-md hover:bg-green-600 transition-colors font-medium disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Sending..." : "Send reset link"}
           </button>
@@ -118,7 +118,7 @@ export const ForgotPasswordPage = () => {
           <button
             type="button"
             onClick={() => navigate(ROUTES.Login)}
-            className="cursor-pointer text-sky-500 hover:text-sky-600 text-sm text-center"
+            className="cursor-pointer text-green-500 hover:text-green-600 text-sm text-center"
           >
             Back to login
           </button>
