@@ -13,4 +13,5 @@ export const ROUTES = {
   TwoFactorVerify: "/auth/2fa-verify",
   SavedSentences: "/saved-sentences",
   TranslateWord: "/translate-word",
+  SavedWords: "/saved-words",
 } as const;

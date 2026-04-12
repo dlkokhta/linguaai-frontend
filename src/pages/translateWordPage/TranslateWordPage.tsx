@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Languages, Loader2, Volume2 } from "lucide-react";
+import { Bookmark, Languages, Loader2, Volume2 } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
@@ -35,6 +35,8 @@ export const TranslateWordPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [revealedExamples, setRevealedExamples] = useState<Set<number>>(new Set());
+  const [savedId, setSavedId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -66,6 +68,7 @@ export const TranslateWordPage = () => {
     setError(null);
     setResult(null);
     setRevealedExamples(new Set());
+    setSavedId(null);
     try {
       const res = await axiosInstance.post<TranslationResult>("/translate/word", { word: word.trim() });
       setResult(res.data);
@@ -91,6 +94,28 @@ export const TranslateWordPage = () => {
     utterance.lang = "en-US";
     utterance.rate = 0.9;
     window.speechSynthesis.speak(utterance);
+  };
+
+  const handleSave = async () => {
+    if (!result) return;
+    setSaving(true);
+    try {
+      if (savedId) {
+        await axiosInstance.delete(`/saved-words/${savedId}`);
+        setSavedId(null);
+      } else {
+        const res = await axiosInstance.post<{ id: string }>("/saved-words", {
+          word: result.word,
+          translation: result.translation,
+          examples: result.examples,
+        });
+        setSavedId(res.data.id);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setSaving(false);
+    }
   };
 
   const getInitials = () => {
@@ -157,14 +182,29 @@ export const TranslateWordPage = () => {
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">{result.word}</p>
                     <p className="text-lg text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">{result.translation}</p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => speakText(result.word)}
-                    className="cursor-pointer flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
-                  >
-                    <Volume2 size={15} />
-                    Listen
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => speakText(result.word)}
+                      className="cursor-pointer flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
+                    >
+                      <Volume2 size={15} />
+                      Listen
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSave}
+                      disabled={saving}
+                      className={`cursor-pointer flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-colors disabled:opacity-60 ${
+                        savedId
+                          ? "text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                          : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      }`}
+                    >
+                      <Bookmark size={15} className={savedId ? "fill-current" : ""} />
+                      {savedId ? "Saved" : "Save"}
+                    </button>
+                  </div>
                 </div>
 
                 {/* Examples */}
