@@ -15,6 +15,7 @@ import { AdminPage } from "../pages/adminPage";
 import { TwoFactorVerifyPage } from "../pages/twoFactorVerifyPage";
 import { GenerateSentencesPage } from "../pages/generateSentencesPage";
 import { SavedSentencesPage } from "../pages/savedSentencesPage";
+import { TranslateWordPage } from "../pages/translateWordPage";
 
 export const AppRouter = () => {
   return (
@@ -56,6 +57,14 @@ export const AppRouter = () => {
         element={
           <ProtectedRoute>
             <SavedSentencesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.TranslateWord}
+        element={
+          <ProtectedRoute>
+            <TranslateWordPage />
           </ProtectedRoute>
         }
       />

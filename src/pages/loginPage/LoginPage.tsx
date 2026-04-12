@@ -140,6 +140,7 @@ export const LoginPage = () => {
                   id="email"
                   {...register("email")}
                   name="email"
+                  autoComplete="email"
                   placeholder="you@example.com"
                 />
               </div>
@@ -168,6 +169,7 @@ export const LoginPage = () => {
                   id="password"
                   {...register("password")}
                   name="password"
+                  autoComplete="current-password"
                   placeholder="••••••••"
                 />
               </div>

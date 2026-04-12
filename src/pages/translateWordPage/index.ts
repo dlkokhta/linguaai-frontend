@@ -1,0 +1,1 @@
+export { TranslateWordPage } from "./TranslateWordPage";

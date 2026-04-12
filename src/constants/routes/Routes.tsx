@@ -12,4 +12,5 @@ export const ROUTES = {
   AdminPanel: "/adminPanel",
   TwoFactorVerify: "/auth/2fa-verify",
   SavedSentences: "/saved-sentences",
+  TranslateWord: "/translate-word",
 } as const;

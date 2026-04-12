@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ProfileLeftSidebar } from "./components/ProfileLeftSidebar";
 import { ProfileRightSidebar } from "./components/ProfileRightSidebar";
@@ -21,11 +21,14 @@ interface UserProfile {
 
 export const ProfilePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setAccessToken } = useAuth();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
-  const [activeTab, setActiveTab] = useState<"overview" | "settings">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "settings">(
+    location.state?.tab ?? "overview"
+  );
 
   useEffect(() => {
     const fetchProfile = async () => {
