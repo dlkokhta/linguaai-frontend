@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, CheckCircle2, RotateCcw, XCircle } from "lucide-react";
+import { BookOpen, RotateCcw } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
@@ -26,6 +26,11 @@ interface SavedWord {
   createdAt: string;
 }
 
+interface QuizQuestion {
+  correct: SavedWord;
+  options: string[]; // 4 shuffled English words
+}
+
 type Mode = "all" | "random10" | "recent";
 type Screen = "setup" | "quiz" | "result";
 
@@ -37,10 +42,19 @@ function filterByMode(words: SavedWord[], mode: Mode): SavedWord[] {
   if (mode === "random10") return shuffle(words).slice(0, 10);
   if (mode === "recent") {
     const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    const recent = words.filter((w) => new Date(w.createdAt).getTime() >= cutoff);
-    return shuffle(recent);
+    return shuffle(words.filter((w) => new Date(w.createdAt).getTime() >= cutoff));
   }
   return shuffle(words);
+}
+
+function buildQuestions(deck: SavedWord[], allWords: SavedWord[]): QuizQuestion[] {
+  return deck.map((correct) => {
+    const distractors = shuffle(allWords.filter((w) => w.id !== correct.id))
+      .slice(0, 3)
+      .map((w) => w.word);
+    const options = shuffle([correct.word, ...distractors]);
+    return { correct, options };
+  });
 }
 
 export const VocabularyQuizPage = () => {
@@ -51,12 +65,11 @@ export const VocabularyQuizPage = () => {
   const [allWords, setAllWords] = useState<SavedWord[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // quiz state
   const [screen, setScreen] = useState<Screen>("setup");
   const [mode, setMode] = useState<Mode>("all");
-  const [deck, setDeck] = useState<SavedWord[]>([]);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [revealed, setRevealed] = useState(false);
+  const [selected, setSelected] = useState<string | null>(null);
   const [score, setScore] = useState(0);
 
   useEffect(() => {
@@ -101,30 +114,40 @@ export const VocabularyQuizPage = () => {
   };
 
   const startQuiz = () => {
-    const filtered = filterByMode(allWords, mode);
-    setDeck(filtered);
+    const deck = filterByMode(allWords, mode);
+    setQuestions(buildQuestions(deck, allWords));
     setCurrentIndex(0);
     setScore(0);
-    setRevealed(false);
+    setSelected(null);
     setScreen("quiz");
   };
 
-  const handleAnswer = (correct: boolean) => {
-    if (correct) setScore((s) => s + 1);
-    if (currentIndex + 1 >= deck.length) {
+  const handleSelect = (option: string) => {
+    if (selected !== null) return; // already answered
+    setSelected(option);
+    if (option === questions[currentIndex].correct.word) {
+      setScore((s) => s + 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex + 1 >= questions.length) {
       setScreen("result");
     } else {
       setCurrentIndex((i) => i + 1);
-      setRevealed(false);
+      setSelected(null);
     }
   };
 
   const restart = () => {
     setScreen("setup");
-    setRevealed(false);
+    setSelected(null);
   };
 
-  const currentWord = deck[currentIndex];
+  const currentQuestion = questions[currentIndex];
+  const recentCount = allWords.filter(
+    (w) => Date.now() - new Date(w.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000
+  ).length;
 
   if (loading) {
     return (
@@ -155,12 +178,12 @@ export const VocabularyQuizPage = () => {
             {/* ── Setup screen ── */}
             {screen === "setup" && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 space-y-5">
-                {allWords.length === 0 ? (
+                {allWords.length < 4 ? (
                   <div className="text-center py-8">
                     <BookOpen size={32} className="mx-auto mb-3 text-gray-300 dark:text-gray-600" />
-                    <p className="text-sm text-gray-500 dark:text-gray-400">You have no saved words yet.</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">You need at least 4 saved words to start a quiz.</p>
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                      Go to Translate Word, translate some words and save them first.
+                      You have {allWords.length} — save {4 - allWords.length} more.
                     </p>
                     <button
                       onClick={() => navigate(ROUTES.TranslateWord)}
@@ -175,31 +198,26 @@ export const VocabularyQuizPage = () => {
                       <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Choose quiz mode</p>
                       <div className="space-y-2">
                         {([
-                          { id: "all", label: "All words", desc: `${allWords.length} word${allWords.length !== 1 ? "s" : ""}` },
-                          { id: "random10", label: "10 random", desc: "Quick session", disabled: allWords.length < 2 },
-                          { id: "recent", label: "Recent (last 7 days)", desc: `${allWords.filter(w => Date.now() - new Date(w.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000).length} word${allWords.filter(w => Date.now() - new Date(w.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000).length !== 1 ? "s" : ""}` },
-                        ] as const).map((item) => {
-                          const isDisabled = item.id === "random10" && allWords.length < 2;
-                          const recentCount = allWords.filter(w => Date.now() - new Date(w.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000).length;
-                          const isRecentEmpty = item.id === "recent" && recentCount === 0;
-                          return (
-                            <button
-                              key={item.id}
-                              onClick={() => !isDisabled && !isRecentEmpty && setMode(item.id)}
-                              disabled={isDisabled || isRecentEmpty}
-                              className={`cursor-pointer w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all ${
-                                mode === item.id
-                                  ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
-                                  : "border-gray-200 dark:border-gray-700 hover:border-emerald-300 dark:hover:border-emerald-700"
-                              } disabled:opacity-40 disabled:cursor-not-allowed`}
-                            >
-                              <span className={`text-sm font-medium ${mode === item.id ? "text-emerald-700 dark:text-emerald-400" : "text-gray-700 dark:text-gray-300"}`}>
-                                {item.label}
-                              </span>
-                              <span className="text-xs text-gray-400">{item.desc}</span>
-                            </button>
-                          );
-                        })}
+                          { id: "all" as Mode, label: "All words", desc: `${allWords.length} word${allWords.length !== 1 ? "s" : ""}`, disabled: false },
+                          { id: "random10" as Mode, label: "10 random", desc: "Quick session", disabled: allWords.length < 10 },
+                          { id: "recent" as Mode, label: "Recent (last 7 days)", desc: `${recentCount} word${recentCount !== 1 ? "s" : ""}`, disabled: recentCount < 4 },
+                        ]).map((item) => (
+                          <button
+                            key={item.id}
+                            onClick={() => !item.disabled && setMode(item.id)}
+                            disabled={item.disabled}
+                            className={`cursor-pointer w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all ${
+                              mode === item.id
+                                ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
+                                : "border-gray-200 dark:border-gray-700 hover:border-emerald-300 dark:hover:border-emerald-700"
+                            } disabled:opacity-40 disabled:cursor-not-allowed`}
+                          >
+                            <span className={`text-sm font-medium ${mode === item.id ? "text-emerald-700 dark:text-emerald-400" : "text-gray-700 dark:text-gray-300"}`}>
+                              {item.label}
+                            </span>
+                            <span className="text-xs text-gray-400">{item.desc}</span>
+                          </button>
+                        ))}
                       </div>
                     </div>
                     <button
@@ -214,58 +232,72 @@ export const VocabularyQuizPage = () => {
             )}
 
             {/* ── Quiz screen ── */}
-            {screen === "quiz" && currentWord && (
+            {screen === "quiz" && currentQuestion && (
               <div className="space-y-4">
 
-                {/* Progress bar */}
+                {/* Progress */}
                 <div>
                   <div className="flex justify-between text-xs text-gray-400 mb-1">
-                    <span>{currentIndex + 1} / {deck.length}</span>
+                    <span>{currentIndex + 1} / {questions.length}</span>
                     <span>{score} correct</span>
                   </div>
                   <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-300"
-                      style={{ width: `${((currentIndex) / deck.length) * 100}%` }}
+                      style={{ width: `${(currentIndex / questions.length) * 100}%` }}
                     />
                   </div>
                 </div>
 
                 {/* Card */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center space-y-6">
-                  <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">What is the English word for?</p>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-white">{currentWord.translation}</p>
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 sm:p-8 space-y-6">
+                  <div className="text-center">
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                      What is the English word for?
+                    </p>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                      {currentQuestion.correct.translation}
+                    </p>
                   </div>
 
-                  {!revealed ? (
-                    <button
-                      onClick={() => setRevealed(true)}
-                      className="cursor-pointer px-6 py-2.5 border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 font-medium rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all"
-                    >
-                      Reveal Answer
-                    </button>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="bg-gray-50 dark:bg-gray-900 rounded-xl px-6 py-4 border border-gray-100 dark:border-gray-700">
-                        <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{currentWord.word}</p>
-                      </div>
-                      <div className="flex gap-3 justify-center">
+                  {/* Options */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {currentQuestion.options.map((option) => {
+                      const isCorrect = option === currentQuestion.correct.word;
+                      const isSelected = option === selected;
+                      let style = "border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/10";
+                      if (selected !== null) {
+                        if (isCorrect) style = "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400";
+                        else if (isSelected) style = "border-red-400 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400";
+                        else style = "border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 opacity-50";
+                      }
+                      return (
                         <button
-                          onClick={() => handleAnswer(false)}
-                          className="cursor-pointer flex items-center gap-2 px-5 py-2.5 bg-red-50 dark:bg-red-900/20 text-red-500 font-medium rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 transition-all border border-red-200 dark:border-red-800"
+                          key={option}
+                          onClick={() => handleSelect(option)}
+                          disabled={selected !== null}
+                          className={`cursor-pointer w-full px-4 py-3 rounded-xl border text-sm font-medium transition-all text-left ${style} disabled:cursor-default`}
                         >
-                          <XCircle size={16} />
-                          Missed
+                          {option}
                         </button>
-                        <button
-                          onClick={() => handleAnswer(true)}
-                          className="cursor-pointer flex items-center gap-2 px-5 py-2.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-medium rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-all border border-emerald-200 dark:border-emerald-800"
-                        >
-                          <CheckCircle2 size={16} />
-                          Got it
-                        </button>
-                      </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Next button — appears after selection */}
+                  {selected !== null && (
+                    <div className="flex items-center justify-between pt-1">
+                      <p className={`text-sm font-medium ${selected === currentQuestion.correct.word ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
+                        {selected === currentQuestion.correct.word
+                          ? "Correct!"
+                          : `Correct answer: ${currentQuestion.correct.word}`}
+                      </p>
+                      <button
+                        onClick={handleNext}
+                        className="cursor-pointer px-5 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-sm font-medium rounded-xl transition-all"
+                      >
+                        {currentIndex + 1 >= questions.length ? "See Results" : "Next"}
+                      </button>
                     </div>
                   )}
                 </div>
@@ -276,13 +308,13 @@ export const VocabularyQuizPage = () => {
             {screen === "result" && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center space-y-5">
                 <div>
-                  <p className="text-4xl font-bold text-gray-900 dark:text-white">{score} / {deck.length}</p>
+                  <p className="text-4xl font-bold text-gray-900 dark:text-white">{score} / {questions.length}</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                    {score === deck.length
+                    {score === questions.length
                       ? "Perfect score! Outstanding!"
-                      : score >= deck.length * 0.8
+                      : score >= questions.length * 0.8
                       ? "Great job! Keep it up!"
-                      : score >= deck.length * 0.5
+                      : score >= questions.length * 0.5
                       ? "Good effort! Keep practicing."
                       : "Keep going, practice makes perfect!"}
                   </p>
@@ -290,7 +322,7 @@ export const VocabularyQuizPage = () => {
                 <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-500"
-                    style={{ width: `${(score / deck.length) * 100}%` }}
+                    style={{ width: `${(score / questions.length) * 100}%` }}
                   />
                 </div>
                 <div className="flex gap-3 justify-center">
