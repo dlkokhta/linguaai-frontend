@@ -17,6 +17,7 @@ import { GenerateSentencesPage } from "../pages/generateSentencesPage";
 import { SavedSentencesPage } from "../pages/savedSentencesPage";
 import { TranslateWordPage } from "../pages/translateWordPage";
 import { SavedWordsPage } from "../pages/savedWordsPage";
+import { VocabularyQuizPage } from "../pages/vocabularyQuizPage";
 
 export const AppRouter = () => {
   return (
@@ -66,6 +67,14 @@ export const AppRouter = () => {
         element={
           <ProtectedRoute>
             <SavedWordsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.VocabularyQuiz}
+        element={
+          <ProtectedRoute>
+            <VocabularyQuizPage />
           </ProtectedRoute>
         }
       />

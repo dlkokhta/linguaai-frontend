@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Bookmark, BookMarked, Languages, LayoutDashboard, LogOut, Settings, Wand2 } from "lucide-react";
+import { Bookmark, BookMarked, BrainCircuit, Languages, LayoutDashboard, LogOut, Settings, Wand2 } from "lucide-react";
 import { ROUTES } from "../../../constants";
 
 interface UserProfile {
@@ -90,6 +90,13 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
             >
               <BookMarked size={16} />
               Saved Words
+            </button>
+            <button
+              onClick={() => navigate(ROUTES.VocabularyQuiz)}
+              className="cursor-pointer w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
+              <BrainCircuit size={16} />
+              Vocabulary Quiz
             </button>
           </div>
         </nav>

@@ -14,4 +14,5 @@ export const ROUTES = {
   SavedSentences: "/saved-sentences",
   TranslateWord: "/translate-word",
   SavedWords: "/saved-words",
+  VocabularyQuiz: "/vocabulary-quiz",
 } as const;
