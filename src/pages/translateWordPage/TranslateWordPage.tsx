@@ -128,7 +128,7 @@ export const TranslateWordPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col lg:flex-row dark:bg-gray-900">
 
       <ProfileLeftSidebar
         onLogout={handleLogout}
