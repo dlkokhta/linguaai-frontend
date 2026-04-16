@@ -113,14 +113,25 @@ export const TranslateTextPage = () => {
                   rows={5}
                   className="w-full px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white dark:placeholder:text-gray-500 resize-none"
                 />
-                <button
-                  type="submit"
-                  disabled={loading || !text.trim()}
-                  className="cursor-pointer flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-5 py-2.5 text-sm rounded-xl font-medium disabled:opacity-60 transition-all"
-                >
-                  {loading ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />}
-                  {loading ? "Translating…" : "Translate"}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="submit"
+                    disabled={loading || !text.trim()}
+                    className="cursor-pointer flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-5 py-2.5 text-sm rounded-xl font-medium disabled:opacity-60 transition-all"
+                  >
+                    {loading ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />}
+                    {loading ? "Translating…" : "Translate"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => speakText(text)}
+                    disabled={!text.trim()}
+                    className="cursor-pointer flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 disabled:opacity-40 transition-colors"
+                  >
+                    <Volume2 size={15} />
+                    Listen (EN)
+                  </button>
+                </div>
               </form>
             </div>
 
@@ -132,17 +143,7 @@ export const TranslateTextPage = () => {
 
             {translation && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 sm:p-6 space-y-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Georgian Translation</p>
-                  <button
-                    type="button"
-                    onClick={() => speakText(text)}
-                    className="cursor-pointer flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
-                  >
-                    <Volume2 size={15} />
-                    Listen (EN)
-                  </button>
-                </div>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Georgian Translation</p>
                 <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">
                   {translation}
                 </p>
