@@ -139,7 +139,7 @@ export const GenerateSentencesPage = () => {
       />
 
       {/* ── Main + Right ── */}
-      <div className="flex-1 lg:ml-56 flex min-h-screen">
+      <div className="flex-1 flex min-h-screen">
 
         {/* Main */}
         <div className="flex-1 min-w-0 bg-gray-50 dark:bg-gray-900">

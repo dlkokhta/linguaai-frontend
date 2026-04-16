@@ -16,6 +16,7 @@ import { TwoFactorVerifyPage } from "../pages/twoFactorVerifyPage";
 import { GenerateSentencesPage } from "../pages/generateSentencesPage";
 import { SavedSentencesPage } from "../pages/savedSentencesPage";
 import { TranslateWordPage } from "../pages/translateWordPage";
+import { TranslateTextPage } from "../pages/translateTextPage";
 import { SavedWordsPage } from "../pages/savedWordsPage";
 import { VocabularyQuizPage } from "../pages/vocabularyQuizPage";
 
@@ -83,6 +84,14 @@ export const AppRouter = () => {
         element={
           <ProtectedRoute>
             <TranslateWordPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.TranslateText}
+        element={
+          <ProtectedRoute>
+            <TranslateTextPage />
           </ProtectedRoute>
         }
       />

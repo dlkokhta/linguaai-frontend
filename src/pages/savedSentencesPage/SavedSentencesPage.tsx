@@ -116,7 +116,7 @@ export const SavedSentencesPage = () => {
         getInitials={getInitials}
       />
 
-      <div className="flex-1 lg:ml-56 flex min-h-screen">
+      <div className="flex-1 flex min-h-screen">
 
         <div className="flex-1 min-w-0 bg-gray-50 dark:bg-gray-900">
           <main className="px-4 sm:px-6 py-6 max-w-2xl mx-auto space-y-4">

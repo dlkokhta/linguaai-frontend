@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  Bookmark, BookMarked, BrainCircuit, Languages,
+  Bookmark, BookMarked, BrainCircuit, FileText, Languages,
   LayoutDashboard, LogOut, Menu, Settings, Wand2, X,
 } from "lucide-react";
 import { ROUTES } from "../../../constants";
@@ -41,6 +41,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
     { route: ROUTES.GenerateSentences, label: "Generate Sentences", icon: <Wand2 size={16} /> },
     { route: ROUTES.SavedSentences,    label: "Saved Sentences",    icon: <Bookmark size={16} /> },
     { route: ROUTES.TranslateWord,     label: "Translate Word",     icon: <Languages size={16} /> },
+    { route: ROUTES.TranslateText,     label: "Translate Text",     icon: <FileText size={16} /> },
     { route: ROUTES.SavedWords,        label: "Saved Words",        icon: <BookMarked size={16} /> },
     { route: ROUTES.VocabularyQuiz,    label: "Vocabulary Quiz",    icon: <BrainCircuit size={16} /> },
   ];

@@ -13,6 +13,7 @@ export const ROUTES = {
   TwoFactorVerify: "/auth/2fa-verify",
   SavedSentences: "/saved-sentences",
   TranslateWord: "/translate-word",
+  TranslateText: "/translate-text",
   SavedWords: "/saved-words",
   VocabularyQuiz: "/vocabulary-quiz",
 } as const;
