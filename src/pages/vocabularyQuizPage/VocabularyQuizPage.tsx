@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, RotateCcw } from "lucide-react";
+import { BookOpen, RotateCcw, Volume2 } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
@@ -71,6 +71,7 @@ export const VocabularyQuizPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [score, setScore] = useState(0);
+  const [wrongWords, setWrongWords] = useState<SavedWord[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -119,15 +120,26 @@ export const VocabularyQuizPage = () => {
     setCurrentIndex(0);
     setScore(0);
     setSelected(null);
+    setWrongWords([]);
     setScreen("quiz");
   };
 
   const handleSelect = (option: string) => {
-    if (selected !== null) return; // already answered
+    if (selected !== null) return;
     setSelected(option);
     if (option === questions[currentIndex].correct.word) {
       setScore((s) => s + 1);
+    } else {
+      setWrongWords((prev) => [...prev, questions[currentIndex].correct]);
     }
+  };
+
+  const speakText = (text: string) => {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
   };
 
   const handleNext = () => {
@@ -340,6 +352,32 @@ export const VocabularyQuizPage = () => {
                     Saved Words
                   </button>
                 </div>
+
+                {wrongWords.length > 0 && (
+                  <div className="text-left pt-2 border-t border-gray-100 dark:border-gray-700">
+                    <p className="text-xs font-semibold text-red-400 uppercase tracking-wide mb-3">
+                      Words to Review ({wrongWords.length})
+                    </p>
+                    <div className="space-y-2">
+                      {wrongWords.map((w) => (
+                        <div key={w.id} className="flex items-center justify-between px-4 py-3 rounded-xl border border-red-100 dark:border-red-900/30 bg-red-50 dark:bg-red-900/10">
+                          <div>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-white">{w.word}</p>
+                            <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">{w.translation}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => speakText(w.word)}
+                            className="cursor-pointer p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
+                            title="Listen"
+                          >
+                            <Volume2 size={15} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
