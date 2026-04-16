@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bookmark, Trash2, Volume2 } from "lucide-react";
+import { Bookmark, Search, Trash2, Volume2 } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
@@ -34,6 +34,7 @@ export const SavedSentencesPage = () => {
   const [sentences, setSentences] = useState<SavedSentence[]>([]);
   const [loading, setLoading] = useState(true);
   const [revealedTranslations, setRevealedTranslations] = useState<Set<string>>(new Set());
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -127,6 +128,19 @@ export const SavedSentencesPage = () => {
               <span className="ml-auto text-xs text-gray-400">{sentences.length} sentence{sentences.length !== 1 ? "s" : ""}</span>
             </div>
 
+            {sentences.length > 0 && (
+              <div className="relative">
+                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search sentences…"
+                  className="w-full pl-9 pr-3 py-2.5 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white dark:placeholder:text-gray-500"
+                />
+              </div>
+            )}
+
             {sentences.length === 0 ? (
               <div className="bg-white dark:bg-gray-800 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-10 text-center">
                 <Bookmark size={28} className="mx-auto mb-3 text-gray-300 dark:text-gray-600" />
@@ -135,8 +149,17 @@ export const SavedSentencesPage = () => {
               </div>
             ) : (
               <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 sm:p-6">
+                {sentences.filter((s) =>
+                  s.en.toLowerCase().includes(search.toLowerCase()) ||
+                  s.topic.toLowerCase().includes(search.toLowerCase())
+                ).length === 0 && search ? (
+                  <p className="text-sm text-center text-gray-400 dark:text-gray-500 py-4">No sentences matching "{search}"</p>
+                ) : null}
                 <ol className="space-y-3">
-                  {sentences.map((s) => (
+                  {sentences.filter((s) =>
+                    s.en.toLowerCase().includes(search.toLowerCase()) ||
+                    s.topic.toLowerCase().includes(search.toLowerCase())
+                  ).map((s) => (
                     <li key={s.id} className="rounded-xl border border-gray-100 dark:border-gray-700 p-3">
                       <div className="flex items-start gap-3">
                         <div className="flex-1 min-w-0">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bookmark, ChevronDown, ChevronUp, Trash2, Volume2 } from "lucide-react";
+import { Bookmark, ChevronDown, ChevronUp, Search, Trash2, Volume2 } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
@@ -35,6 +35,7 @@ export const SavedWordsPage = () => {
   const [loading, setLoading] = useState(true);
   const [revealedExamples, setRevealedExamples] = useState<Record<string, Set<number>>>({});
   const [expandedWords, setExpandedWords] = useState<Set<string>>(new Set());
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -137,6 +138,19 @@ export const SavedWordsPage = () => {
               <span className="ml-auto text-xs text-gray-400">{words.length} word{words.length !== 1 ? "s" : ""}</span>
             </div>
 
+            {words.length > 0 && (
+              <div className="relative">
+                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search words…"
+                  className="w-full pl-9 pr-3 py-2.5 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white dark:placeholder:text-gray-500"
+                />
+              </div>
+            )}
+
             {words.length === 0 ? (
               <div className="bg-white dark:bg-gray-800 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-10 text-center">
                 <Bookmark size={28} className="mx-auto mb-3 text-gray-300 dark:text-gray-600" />
@@ -145,7 +159,18 @@ export const SavedWordsPage = () => {
               </div>
             ) : (
               <div className="space-y-3">
-                {words.map((w) => (
+                {words.filter((w) =>
+                  w.word.toLowerCase().includes(search.toLowerCase()) ||
+                  w.translation.toLowerCase().includes(search.toLowerCase())
+                ).length === 0 && search ? (
+                  <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center">
+                    <p className="text-sm text-gray-400 dark:text-gray-500">No words matching "{search}"</p>
+                  </div>
+                ) : null}
+                {words.filter((w) =>
+                  w.word.toLowerCase().includes(search.toLowerCase()) ||
+                  w.translation.toLowerCase().includes(search.toLowerCase())
+                ).map((w) => (
                   <div key={w.id} className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 sm:p-5">
 
                     {/* Word header */}
