@@ -5,6 +5,7 @@ import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
 import { ProfileRightSidebar } from "../profilePage/components/ProfileRightSidebar";
+import { Toast } from "../../components/Toast";
 
 interface UserProfile {
   id: string;
@@ -42,6 +43,7 @@ export const GenerateSentencesPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [revealedTranslations, setRevealedTranslations] = useState<Set<number>>(new Set());
   const [savedMap, setSavedMap] = useState<Record<number, string>>({});
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ topic, difficulty, sentences }));
@@ -117,6 +119,7 @@ export const GenerateSentencesPage = () => {
         topic,
       });
       setSavedMap((prev) => ({ ...prev, [index]: res.data.id }));
+      setToast("Sentence saved!");
     }
   };
 
@@ -263,6 +266,8 @@ export const GenerateSentencesPage = () => {
         <ProfileRightSidebar />
 
       </div>
+
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
 import { ProfileRightSidebar } from "../profilePage/components/ProfileRightSidebar";
+import { Toast } from "../../components/Toast";
 
 interface UserProfile {
   id: string;
@@ -29,6 +30,7 @@ export const TranslateTextPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedText, setSelectedText] = useState("");
   const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -98,6 +100,7 @@ export const TranslateTextPage = () => {
         });
       }
       setSelectedText("");
+      setToast(isWord ? "Word saved!" : "Sentence saved!");
     } catch {
       // ignore
     } finally {
@@ -228,6 +231,8 @@ export const TranslateTextPage = () => {
 
         <ProfileRightSidebar />
       </div>
+
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   );
 };

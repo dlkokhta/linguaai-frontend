@@ -6,6 +6,7 @@ import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
 import { ProfileRightSidebar } from "../profilePage/components/ProfileRightSidebar";
+import { Toast } from "../../components/Toast";
 
 interface UserProfile {
   id: string;
@@ -37,6 +38,7 @@ export const TranslateWordPage = () => {
   const [revealedExamples, setRevealedExamples] = useState<Set<number>>(new Set());
   const [savedId, setSavedId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -110,6 +112,7 @@ export const TranslateWordPage = () => {
           examples: result.examples,
         });
         setSavedId(res.data.id);
+        setToast("Word saved!");
       }
     } catch {
       // ignore
@@ -251,6 +254,8 @@ export const TranslateWordPage = () => {
 
         <ProfileRightSidebar />
       </div>
+
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   );
 };
