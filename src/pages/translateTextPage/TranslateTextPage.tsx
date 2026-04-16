@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bookmark, FileText, Loader2, Volume2 } from "lucide-react";
+import { Bookmark, Check, Copy, FileText, Loader2, Volume2 } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
@@ -29,6 +29,7 @@ export const TranslateTextPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedText, setSelectedText] = useState("");
   const [saving, setSaving] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -102,6 +103,13 @@ export const TranslateTextPage = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleCopy = async () => {
+    if (!translation) return;
+    await navigator.clipboard.writeText(translation);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const speakText = (content: string) => {
@@ -198,7 +206,17 @@ export const TranslateTextPage = () => {
 
             {translation && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 sm:p-6 space-y-3">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Georgian Translation</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Georgian Translation</p>
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="cursor-pointer flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    {copied ? <Check size={13} className="text-emerald-500" /> : <Copy size={13} />}
+                    {copied ? "Copied!" : "Copy"}
+                  </button>
+                </div>
                 <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">
                   {translation}
                 </p>
