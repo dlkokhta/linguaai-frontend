@@ -108,11 +108,11 @@ export const RegistrationPage = () => {
       </div>
 
       {/* Right form panel */}
-      <div className="w-full lg:w-3/5 flex flex-col justify-center px-6 sm:px-10 lg:px-16 xl:px-24 py-10 overflow-y-auto">
-        {/* Mobile logo */}
+      <div className="w-full lg:w-3/5 flex flex-col px-6 sm:px-10 lg:px-16 xl:px-24 py-8 lg:py-10 overflow-y-auto">
+        {/* Mobile logo — pinned to the top */}
         <div
           onClick={() => navigate("/")}
-          className="flex lg:hidden items-center gap-2 mb-8 cursor-pointer"
+          className="flex lg:hidden items-center gap-2 mb-0 cursor-pointer"
         >
           <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">L</span>
@@ -120,6 +120,7 @@ export const RegistrationPage = () => {
           <span className="font-semibold text-gray-900 dark:text-white">LinguaAI</span>
         </div>
 
+        <div className="flex-1 flex flex-col justify-center mt-8 lg:mt-0">
         <div className="w-full max-w-lg">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">
             Create your account
@@ -275,6 +276,7 @@ export const RegistrationPage = () => {
               Sign in
             </button>
           </p>
+        </div>
         </div>
       </div>
     </div>

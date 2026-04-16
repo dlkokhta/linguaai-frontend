@@ -228,7 +228,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
         />
 
         {/* Drawer panel */}
-        <div className={`absolute left-0 top-0 h-full w-72 flex flex-col bg-white dark:bg-gray-900 shadow-xl transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full"}`}>
+        <div className={`absolute right-0 top-0 h-full w-72 flex flex-col bg-white dark:bg-gray-900 shadow-xl transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"}`}>
           <div className="flex items-center justify-end px-4 py-3 border-b border-gray-200 dark:border-gray-700">
             <button
               onClick={() => setOpen(false)}

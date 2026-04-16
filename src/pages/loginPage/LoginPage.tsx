@@ -113,16 +113,17 @@ export const LoginPage = () => {
       </div>
 
       {/* ── Right form panel ── */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 sm:px-10 lg:px-16 py-12">
+      <div className="w-full lg:w-1/2 flex flex-col px-6 sm:px-10 lg:px-16 py-8 lg:py-12">
 
-        {/* Mobile logo */}
-        <div className="flex lg:hidden items-center gap-2 mb-10 cursor-pointer" onClick={() => navigate("/")}>
+        {/* Mobile logo — pinned to the top */}
+        <div className="flex lg:hidden items-center gap-2 mb-0 cursor-pointer" onClick={() => navigate("/")}>
           <div className="w-7 h-7 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-xs">L</span>
           </div>
           <span className="font-bold text-lg text-gray-800 dark:text-white">LinguaAI</span>
         </div>
 
+        <div className="flex-1 flex flex-col justify-center mt-8 lg:mt-0">
         <div className="max-w-sm w-full mx-auto">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">Welcome back</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Sign in to continue your English journey</p>
@@ -201,6 +202,7 @@ export const LoginPage = () => {
               Create one free
             </button>
           </p>
+        </div>
         </div>
       </div>
     </div>
