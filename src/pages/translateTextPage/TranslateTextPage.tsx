@@ -143,15 +143,20 @@ export const TranslateTextPage = () => {
 
             <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 sm:p-6">
               <form onSubmit={handleTranslate} className="space-y-3">
-                <textarea
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  onSelect={handleTextSelect}
-                  onMouseUp={handleTextSelect}
-                  placeholder="Type or paste your English text here…"
-                  rows={5}
-                  className="w-full px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white dark:placeholder:text-gray-500 resize-none"
-                />
+                <div className="relative">
+                  <textarea
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    onSelect={handleTextSelect}
+                    onMouseUp={handleTextSelect}
+                    placeholder="Type or paste your English text here…"
+                    rows={5}
+                    className="w-full px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white dark:placeholder:text-gray-500 resize-none pb-7"
+                  />
+                  <p className="absolute bottom-2 right-3 text-[11px] text-gray-400 dark:text-gray-500 select-none">
+                    {text.trim() ? text.trim().split(/\s+/).length : 0} words · {text.length} chars
+                  </p>
+                </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="submit"

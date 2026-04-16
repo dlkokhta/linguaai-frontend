@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bookmark, Trash2, Volume2 } from "lucide-react";
+import { Bookmark, ChevronDown, ChevronUp, Trash2, Volume2 } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
@@ -34,6 +34,7 @@ export const SavedWordsPage = () => {
   const [words, setWords] = useState<SavedWord[]>([]);
   const [loading, setLoading] = useState(true);
   const [revealedExamples, setRevealedExamples] = useState<Record<string, Set<number>>>({});
+  const [expandedWords, setExpandedWords] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,6 +80,15 @@ export const SavedWordsPage = () => {
       if (set.has(index)) set.delete(index);
       else set.add(index);
       return { ...prev, [wordId]: set };
+    });
+  };
+
+  const toggleExamples = (wordId: string) => {
+    setExpandedWords((prev) => {
+      const next = new Set(prev);
+      if (next.has(wordId)) next.delete(wordId);
+      else next.add(wordId);
+      return next;
     });
   };
 
@@ -164,39 +174,51 @@ export const SavedWordsPage = () => {
                       </button>
                     </div>
 
-                    {/* Examples */}
+                    {/* Examples toggle */}
                     {w.examples.length > 0 && (
-                      <div className="mt-3 space-y-2">
-                        <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Examples</p>
-                        {w.examples.map((ex, i) => (
-                          <div key={i} className="rounded-xl border border-gray-100 dark:border-gray-700 p-3">
-                            <div className="flex items-start justify-between gap-3">
-                              <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">{ex.en}</p>
-                              <div className="flex items-center gap-1 shrink-0">
-                                <button
-                                  type="button"
-                                  onClick={() => speakText(ex.en)}
-                                  className="cursor-pointer p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
-                                  title="Listen"
-                                >
-                                  <Volume2 size={13} />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => toggleExample(w.id, i)}
-                                  className="cursor-pointer px-2 py-1 rounded-lg text-xs font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                                >
-                                  {revealedExamples[w.id]?.has(i) ? "Hide" : "Translate"}
-                                </button>
+                      <div className="mt-3">
+                        <button
+                          type="button"
+                          onClick={() => toggleExamples(w.id)}
+                          className="cursor-pointer flex items-center gap-1.5 text-[11px] font-semibold text-gray-400 uppercase tracking-wide hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                        >
+                          {expandedWords.has(w.id) ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+                          Examples ({w.examples.length})
+                        </button>
+
+                        {expandedWords.has(w.id) && (
+                          <div className="mt-2 space-y-2">
+                            {w.examples.map((ex, i) => (
+                              <div key={i} className="rounded-xl border border-gray-100 dark:border-gray-700 p-3">
+                                <div className="flex items-start justify-between gap-3">
+                                  <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">{ex.en}</p>
+                                  <div className="flex items-center gap-1 shrink-0">
+                                    <button
+                                      type="button"
+                                      onClick={() => speakText(ex.en)}
+                                      className="cursor-pointer p-1.5 rounded-lg text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
+                                      title="Listen"
+                                    >
+                                      <Volume2 size={13} />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleExample(w.id, i)}
+                                      className="cursor-pointer px-2 py-1 rounded-lg text-xs font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                                    >
+                                      {revealedExamples[w.id]?.has(i) ? "Hide" : "Translate"}
+                                    </button>
+                                  </div>
+                                </div>
+                                {revealedExamples[w.id]?.has(i) && (
+                                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 italic border-l-2 border-emerald-400 pl-3">
+                                    {ex.ka}
+                                  </p>
+                                )}
                               </div>
-                            </div>
-                            {revealedExamples[w.id]?.has(i) && (
-                              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 italic border-l-2 border-emerald-400 pl-3">
-                                {ex.ka}
-                              </p>
-                            )}
+                            ))}
                           </div>
-                        ))}
+                        )}
                       </div>
                     )}
 
