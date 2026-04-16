@@ -4,3 +4,4 @@ export * from "./SuccessMessage";
 export * from "./GoogleButton";
 export * from "./ProtectedRoute";
 export * from "./Toast";
+export * from "./SpeakPractice";

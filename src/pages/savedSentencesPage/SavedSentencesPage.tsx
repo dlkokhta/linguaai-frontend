@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bookmark, Search, Trash2, Volume2 } from "lucide-react";
+import { SpeakPractice } from "../../components/SpeakPractice";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
@@ -183,6 +184,7 @@ export const SavedSentencesPage = () => {
                             >
                               {revealedTranslations.has(s.id) ? "Hide" : "Translate"}
                             </button>
+                            <SpeakPractice text={s.en} />
                           </div>
                           {revealedTranslations.has(s.id) && (
                             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 italic border-l-2 border-emerald-400 pl-3">

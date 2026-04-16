@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bookmark, ChevronDown, ChevronUp, Search, Trash2, Volume2 } from "lucide-react";
+import { SpeakPractice } from "../../components/SpeakPractice";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
@@ -176,7 +177,7 @@ export const SavedWordsPage = () => {
                     {/* Word header */}
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <p className="text-lg font-bold text-gray-900 dark:text-white">{w.word}</p>
                           <button
                             type="button"
@@ -186,6 +187,7 @@ export const SavedWordsPage = () => {
                           >
                             <Volume2 size={14} />
                           </button>
+                          <SpeakPractice text={w.word} />
                         </div>
                         <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">{w.translation}</p>
                       </div>
