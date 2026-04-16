@@ -19,6 +19,7 @@ import { TranslateWordPage } from "../pages/translateWordPage";
 import { TranslateTextPage } from "../pages/translateTextPage";
 import { SavedWordsPage } from "../pages/savedWordsPage";
 import { VocabularyQuizPage } from "../pages/vocabularyQuizPage";
+import { TensesOverviewPage, TenseDetailPage } from "../pages/tensesPage";
 
 export const AppRouter = () => {
   return (
@@ -100,6 +101,22 @@ export const AppRouter = () => {
         element={
           <ProtectedRoute requiredRole="ADMIN">
             <AdminPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.Tenses}
+        element={
+          <ProtectedRoute>
+            <TensesOverviewPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.TenseDetail}
+        element={
+          <ProtectedRoute>
+            <TenseDetailPage />
           </ProtectedRoute>
         }
       />

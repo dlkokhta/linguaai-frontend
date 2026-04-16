@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  Bookmark, BookMarked, BrainCircuit, FileText, Languages,
+  Bookmark, BookMarked, BrainCircuit, FileText, GraduationCap, Languages,
   LayoutDashboard, LogOut, Menu, Settings, Wand2, X,
 } from "lucide-react";
 import { ROUTES } from "../../../constants";
@@ -44,10 +44,13 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
     { route: ROUTES.TranslateText,     label: "Translate Text",     icon: <FileText size={16} /> },
     { route: ROUTES.SavedWords,        label: "Saved Words",        icon: <BookMarked size={16} /> },
     { route: ROUTES.VocabularyQuiz,    label: "Vocabulary Quiz",    icon: <BrainCircuit size={16} /> },
+    { route: ROUTES.Tenses,            label: "Tenses",             icon: <GraduationCap size={16} /> },
   ];
 
   const pageTitle = (() => {
-    const practice = practiceItems.find((i) => i.route === pathname);
+    const practice = practiceItems.find((i) =>
+      i.route === ROUTES.Tenses ? pathname.startsWith("/tenses") : i.route === pathname
+    );
     if (practice) return practice.label;
     if (pathname === ROUTES.Profile) return activeTab === "settings" ? "Settings" : "Overview";
     return "";
@@ -86,7 +89,11 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
             <button
               key={item.route}
               onClick={() => { navigate(item.route); setOpen(false); }}
-              className={navItemClass(pathname === item.route)}
+              className={navItemClass(
+                item.route === ROUTES.Tenses
+                  ? pathname.startsWith("/tenses")
+                  : pathname === item.route
+              )}
             >
               {item.icon}
               {item.label}
@@ -156,7 +163,11 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
               <button
                 key={item.route}
                 onClick={() => navigate(item.route)}
-                className={navItemClass(pathname === item.route)}
+                className={navItemClass(
+                  item.route === ROUTES.Tenses
+                    ? pathname.startsWith("/tenses")
+                    : pathname === item.route
+                )}
               >
                 {item.icon}
                 {item.label}
