@@ -7,6 +7,7 @@ import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar
 import { ProfileRightSidebar } from "../profilePage/components/ProfileRightSidebar";
 import { TENSES, DIFFICULTY_COLORS, DIFFICULTY_LABELS } from "../../data/tenses";
 import { TenseLearnTab } from "./components/TenseLearnTab";
+import { TensePracticeTab } from "./components/TensePracticeTab";
 
 interface UserProfile {
   id: string;
@@ -136,11 +137,7 @@ export const TenseDetailPage = () => {
                 {/* Tab content */}
                 {activeTab === "learn" && <TenseLearnTab tense={tense} />}
 
-                {activeTab === "practice" && (
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Practice — coming soon</p>
-                  </div>
-                )}
+                {activeTab === "practice" && <TensePracticeTab tense={tense} />}
 
                 {activeTab === "quiz" && (
                   <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 text-center">
