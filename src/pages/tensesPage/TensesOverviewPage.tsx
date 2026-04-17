@@ -5,7 +5,8 @@ import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
 import { ProfileRightSidebar } from "../profilePage/components/ProfileRightSidebar";
-import { TENSES, TENSE_GROUPS, TenseGroup } from "../../data/tenses";
+import type { TenseGroup } from "../../data/tenses";
+import { TENSES, TENSE_GROUPS } from "../../data/tenses";
 import { TenseCard } from "./components/TenseCard";
 
 interface UserProfile {

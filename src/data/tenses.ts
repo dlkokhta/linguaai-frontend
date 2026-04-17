@@ -61,7 +61,7 @@ export const TENSES: Tense[] = [
     examples: [
       { en: "I have visited London twice.", ka: "ლონდონი ორჯერ მქონია მონახულებული." },
       { en: "She has already finished her homework.", ka: "მას უკვე დაუმთავრებია საშინაო დავალება." },
-      { en: "They have never tried Georgian food.", ka: "მათ არასოდეს უცდიათ ქართული საჭმელი." },
+      { en: "They have never tried Georgian food.", ka: "მათ არასოდეს გაუსინჯავთ ქართული საჭმელი." },
     ],
   },
   {
@@ -77,7 +77,7 @@ export const TENSES: Tense[] = [
     examples: [
       { en: "I have been learning English for two years.", ka: "ინგლისურს ორი წელია ვსწავლობ." },
       { en: "She has been working here since 2020.", ka: "ის 2020 წლიდან მუშაობს აქ." },
-      { en: "They have been waiting for an hour.", ka: "ისინი ერთი საათია ელიან." },
+      { en: "They have been waiting for an hour.", ka: "ისინი ერთი საათია ელodebian." },
     ],
   },
   {
@@ -140,7 +140,7 @@ export const TENSES: Tense[] = [
       "გამოიყენება იმის საჩვენებლად, თუ რამდენ ხანს გრძელდებოდა მოქმედება სხვა წარსულ მოქმედებამდე. მაგ: ის 3 საათი სწავლობდა სანამ დაიძინებდა.",
     examples: [
       { en: "I had been waiting for an hour when she arrived.", ka: "ერთი საათი ვიცდიდი, სანამ ის მოვიდა." },
-      { en: "He had been studying for hours before the exam started.", ka: "ის საათობით სწავლობდა სანამ გამოცდა დაიწყებოდა." },
+      { en: "He had been working all day before he got sick.", ka: "ის მთელი დღე მუშაობდა სანამ დაავადდა." },
       { en: "They had been dating for a year before they got married.", ka: "ისინი ერთი წელი ხვდებოდნენ ერთმანეთს ქორწინებამდე." },
     ],
   },
@@ -172,7 +172,7 @@ export const TENSES: Tense[] = [
       "გამოიყენება მოქმედებისთვის, რომელიც მომავალში კონკრეტულ დროს მიმდინარეობს. მაგ: ხვალ 8 საათზე ვისაუზმებ (ამ დროს პროცესში ვიქნები).",
     examples: [
       { en: "I will be working at 9 am tomorrow.", ka: "ხვალ 9 საათზე მუშაობაში ვიქნები." },
-      { en: "She will be presenting her project when you arrive.", ka: "შენი მოსვლისას ის პროექტს წარადგენს." },
+      { en: "She will be sleeping when you arrive.", ka: "შენი მოსვლისას ის ეძინება." },
       { en: "They will be traveling this time next week.", ka: "მომავალ კვირაში ამ დროს ისინი მოგზაურობაში იქნებიან." },
     ],
   },
