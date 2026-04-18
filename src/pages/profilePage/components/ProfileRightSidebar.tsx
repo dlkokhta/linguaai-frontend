@@ -1,9 +1,14 @@
+import { PomodoroTimer } from "../../../components/PomodoroTimer";
+
 export const ProfileRightSidebar = () => {
   return (
     <aside className="hidden xl:flex xl:w-72 flex-col sticky top-0 h-screen border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shrink-0 overflow-y-auto">
       <div className="flex flex-col gap-3 p-3">
 
-        {/* Word of the Day */}
+        {/* Focus Timer (replaces Word of the Day) */}
+        <PomodoroTimer />
+
+        {/* Word of the Day — kept for later, temporarily replaced by Focus Timer
         <div className="rounded-2xl bg-[#0a2218] p-4 text-white">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-300 mb-2">Word of the Day</p>
           <h3 className="text-2xl font-serif font-bold mb-0.5">Eloquent</h3>
@@ -15,6 +20,7 @@ export const ProfileRightSidebar = () => {
             "She gave an eloquent speech that moved the entire audience."
           </blockquote>
         </div>
+        */}
 
         {/* This Week */}
         <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
