@@ -18,4 +18,5 @@ export const ROUTES = {
   VocabularyQuiz: "/vocabulary-quiz",
   Tenses: "/tenses",
   TenseDetail: "/tenses/:tenseId",
+  TensesQuiz: "/tenses-quiz",
 } as const;

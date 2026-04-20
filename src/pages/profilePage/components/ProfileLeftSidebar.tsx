@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Bookmark, BookMarked, BrainCircuit, FileText, GraduationCap, Languages,
-  LayoutDashboard, LogOut, Menu, Settings, Wand2, X,
+  LayoutDashboard, LogOut, Menu, Settings, Trophy, Wand2, X,
 } from "lucide-react";
 import { ROUTES } from "../../../constants";
 
@@ -45,6 +45,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
     { route: ROUTES.SavedWords,        label: "Saved Words",        icon: <BookMarked size={16} /> },
     { route: ROUTES.VocabularyQuiz,    label: "Vocabulary Quiz",    icon: <BrainCircuit size={16} /> },
     { route: ROUTES.Tenses,            label: "Tenses",             icon: <GraduationCap size={16} /> },
+    { route: ROUTES.TensesQuiz,        label: "Tenses Quiz",        icon: <Trophy size={16} /> },
   ];
 
   const pageTitle = (() => {
@@ -165,7 +166,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
                 onClick={() => navigate(item.route)}
                 className={navItemClass(
                   item.route === ROUTES.Tenses
-                    ? pathname.startsWith("/tenses")
+                    ? pathname === ROUTES.Tenses || pathname.startsWith("/tenses/")
                     : pathname === item.route
                 )}
               >

@@ -20,6 +20,7 @@ import { TranslateTextPage } from "../pages/translateTextPage";
 import { SavedWordsPage } from "../pages/savedWordsPage";
 import { VocabularyQuizPage } from "../pages/vocabularyQuizPage";
 import { TensesOverviewPage, TenseDetailPage } from "../pages/tensesPage";
+import { TensesQuizPage } from "../pages/tensesQuizPage";
 
 export const AppRouter = () => {
   return (
@@ -117,6 +118,14 @@ export const AppRouter = () => {
         element={
           <ProtectedRoute>
             <TenseDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.TensesQuiz}
+        element={
+          <ProtectedRoute>
+            <TensesQuizPage />
           </ProtectedRoute>
         }
       />

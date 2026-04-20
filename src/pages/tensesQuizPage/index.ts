@@ -1,0 +1,1 @@
+export { TensesQuizPage } from "./TensesQuizPage";
