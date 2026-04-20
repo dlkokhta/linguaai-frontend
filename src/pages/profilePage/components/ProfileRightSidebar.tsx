@@ -2,7 +2,7 @@ import { PomodoroTimer } from "../../../components/PomodoroTimer";
 
 export const ProfileRightSidebar = () => {
   return (
-    <aside className="hidden xl:flex xl:w-72 flex-col sticky top-0 h-screen border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shrink-0 overflow-y-auto">
+    <aside className="hidden xl:flex xl:w-72 xl:mr-20 flex-col sticky top-0 h-screen border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shrink-0 overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none]">
       <div className="flex flex-col gap-3 p-3">
 
         {/* Focus Timer (replaces Word of the Day) */}

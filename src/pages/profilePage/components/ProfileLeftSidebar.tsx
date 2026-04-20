@@ -131,7 +131,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
   return (
     <>
       {/* ── Desktop sidebar ── */}
-      <aside className="hidden lg:flex lg:w-56 flex-col sticky top-0 h-screen shrink-0 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 z-10">
+      <aside className="hidden lg:flex lg:w-56 lg:ml-20 flex-col sticky top-0 h-screen shrink-0 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 z-10">
         <div
           onClick={() => navigate("/")}
           className="flex items-center gap-2.5 px-5 py-5 border-b border-gray-200 dark:border-gray-700 cursor-pointer"
