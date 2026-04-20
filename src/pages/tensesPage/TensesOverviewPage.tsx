@@ -68,14 +68,6 @@ export const TensesOverviewPage = () => {
     return "?";
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center dark:bg-gray-900">
-        <p className="text-gray-500 dark:text-gray-400">Loading...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col lg:flex-row dark:bg-gray-900">
       <ProfileLeftSidebar
@@ -93,7 +85,11 @@ export const TensesOverviewPage = () => {
               <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">English Tenses</h1>
             </div>
 
-            {TENSE_GROUPS.map(({ label, value }) => {
+            {loading ? (
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-10 text-center">
+                <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
+              </div>
+            ) : TENSE_GROUPS.map(({ label, value }) => {
               const tenses = TENSES.filter((t) => t.group === value);
               return (
                 <section key={value}>

@@ -161,14 +161,6 @@ export const VocabularyQuizPage = () => {
     (w) => Date.now() - new Date(w.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000
   ).length;
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center dark:bg-gray-900">
-        <p className="text-gray-500 dark:text-gray-400">Loading...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col lg:flex-row dark:bg-gray-900">
 
@@ -187,8 +179,14 @@ export const VocabularyQuizPage = () => {
               <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Vocabulary Quiz</h1>
             </div>
 
+            {loading && (
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-10 text-center">
+                <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
+              </div>
+            )}
+
             {/* ── Setup screen ── */}
-            {screen === "setup" && (
+            {!loading && screen === "setup" && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 space-y-5">
                 {allWords.length < 4 ? (
                   <div className="text-center py-8">

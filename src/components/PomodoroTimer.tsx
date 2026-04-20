@@ -32,15 +32,16 @@ export const PomodoroTimer = () => {
   const phaseLabel =
     phase === "break" ? "Break" : phase === "focus" ? "Focus" : "Ready";
 
-  const ringColor = phase === "break" ? "#34d399" : "#10b981";
+  const activeRingClass =
+    phase === "break" ? "stroke-emerald-400" : "stroke-emerald-500";
 
   return (
-    <div className="rounded-2xl bg-[#0a2218] p-4 text-white">
+    <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4 text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-300">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500">
           Focus Timer
         </p>
-        <p className="text-[10px] font-medium text-emerald-400/80">
+        <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400">
           {completedCycles}/4 cycles
         </p>
       </div>
@@ -53,27 +54,27 @@ export const PomodoroTimer = () => {
               cy="60"
               r={RADIUS}
               fill="none"
-              stroke="rgba(16, 185, 129, 0.15)"
               strokeWidth="6"
+              className="stroke-gray-200 dark:stroke-gray-700"
             />
             <circle
               cx="60"
               cy="60"
               r={RADIUS}
               fill="none"
-              stroke={ringColor}
               strokeWidth="6"
               strokeLinecap="round"
               strokeDasharray={CIRCUMFERENCE}
               strokeDashoffset={dashOffset}
+              className={activeRingClass}
               style={{ transition: "stroke-dashoffset 1s linear" }}
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <p className="text-[10px] uppercase tracking-widest text-emerald-300">
+            <p className="text-[10px] uppercase tracking-widest text-emerald-500">
               {phaseLabel}
             </p>
-            <p className="text-2xl font-mono font-bold tabular-nums">
+            <p className="text-2xl font-mono font-bold tabular-nums text-gray-800 dark:text-white">
               {formatTime(secondsLeft)}
             </p>
           </div>
@@ -90,7 +91,7 @@ export const PomodoroTimer = () => {
               className={`cursor-pointer py-1.5 rounded-lg text-[11px] font-semibold transition-colors ${
                 isActive
                   ? "bg-emerald-500 text-white"
-                  : "bg-emerald-900/40 text-emerald-200 hover:bg-emerald-800/60"
+                  : "bg-white text-gray-700 border border-gray-200 hover:bg-emerald-50 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700"
               }`}
             >
               {POMODORO_MODES[key].label}
@@ -121,7 +122,7 @@ export const PomodoroTimer = () => {
         )}
         <button
           onClick={reset}
-          className="cursor-pointer px-4 py-2 rounded-xl border border-emerald-400/40 text-emerald-200 hover:bg-emerald-900/40 text-sm font-semibold transition-colors"
+          className="cursor-pointer px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-white dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 text-sm font-semibold transition-colors"
         >
           Reset
         </button>
