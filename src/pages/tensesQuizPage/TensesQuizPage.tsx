@@ -69,7 +69,11 @@ export const TensesQuizPage = () => {
         "/generate/quiz",
         { tense: tenseName, level }
       );
-      setQuestions(res.data.questions);
+      const normalized = res.data.questions.map((q) => ({
+        ...q,
+        options: q.options.flatMap((o) => o.trim().split(/\s+/)),
+      }));
+      setQuestions(normalized);
       setCurrentIndex(0);
       setPhase("quiz");
     } catch {
