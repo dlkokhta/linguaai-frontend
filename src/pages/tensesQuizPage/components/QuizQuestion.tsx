@@ -105,7 +105,7 @@ export const QuizQuestion = ({ question, questionNumber, total, onNext }: Props)
 
       {/* Wrong word feedback */}
       {wrongWord && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-2.5 text-sm text-red-600 dark:text-red-400">
+        <div data-testid="wrong-word-feedback" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-2.5 text-sm text-red-600 dark:text-red-400">
           "<span className="font-semibold">{wrongWord}</span>" is not correct here. Try another word.
         </div>
       )}
