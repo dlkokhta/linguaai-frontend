@@ -6,7 +6,7 @@ import type { TenseDifficulty } from "../../../data/tenses";
 export type QuizLevel = "basic" | "intermediate" | "advanced";
 
 interface Props {
-  onStart: (tenseName: string, level: QuizLevel) => Promise<void>;
+  onStart: (tenseName: string, formula: string, level: QuizLevel) => Promise<void>;
   loading: boolean;
 }
 
@@ -16,7 +16,7 @@ export const QuizSetup = ({ onStart, loading }: Props) => {
 
   const handleStart = () => {
     const tense = TENSES.find((t) => t.id === selectedTenseId)!;
-    onStart(tense.name, selectedLevel);
+    onStart(tense.name, tense.formula, selectedLevel);
   };
 
   return (

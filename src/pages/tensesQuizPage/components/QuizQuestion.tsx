@@ -43,7 +43,6 @@ export const QuizQuestion = ({ question, questionNumber, total, onNext }: Props)
 
     const expected = question.answers[filled.length];
     if (word.toLowerCase() === expected.toLowerCase()) {
-      speakText(word);
       const newFilled = [...filled, word];
       setFilled(newFilled);
       setUsedIndices((prev) => new Set([...prev, optionIndex]));
