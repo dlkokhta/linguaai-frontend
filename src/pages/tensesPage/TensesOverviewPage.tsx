@@ -69,7 +69,7 @@ export const TensesOverviewPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col xl:flex-row dark:bg-gray-900">
       <ProfileLeftSidebar
         onLogout={handleLogout}
         profile={profile ?? { firstname: null, lastname: null, email: "", role: "REGULAR", picture: null }}

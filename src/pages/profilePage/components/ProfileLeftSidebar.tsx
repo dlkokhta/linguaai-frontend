@@ -138,7 +138,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
   return (
     <>
       {/* ── Desktop sidebar ── */}
-      <aside className="hidden lg:flex lg:w-56 lg:ml-20 flex-col sticky top-0 h-screen shrink-0 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 z-10">
+      <aside className="hidden xl:flex xl:w-56 xl:ml-20 flex-col sticky top-0 h-screen shrink-0 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 z-10">
         <div
           onClick={() => navigate("/")}
           className="flex items-center gap-2.5 px-5 py-5 border-b border-gray-200 dark:border-gray-700 cursor-pointer"
@@ -209,7 +209,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
       </aside>
 
       {/* ── Mobile navbar ── */}
-      <div className="lg:hidden sticky top-0 z-40">
+      <div className="xl:hidden sticky top-0 z-40">
         {/* Top bar — matches homepage navbar style */}
         <nav className="flex items-center justify-between px-5 py-3.5 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/60 dark:border-gray-700/60">
           {/* Left: logo */}
@@ -239,7 +239,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
       </div>
 
       {/* ── Mobile drawer ── */}
-      <div className={`lg:hidden fixed inset-0 z-50 transition-all duration-300 ${open ? "visible" : "invisible"}`}>
+      <div className={`xl:hidden fixed inset-0 z-50 transition-all duration-300 ${open ? "visible" : "invisible"}`}>
         {/* Backdrop */}
         <div
           className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}

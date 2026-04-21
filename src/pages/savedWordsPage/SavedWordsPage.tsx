@@ -112,7 +112,7 @@ export const SavedWordsPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row dark:bg-gray-900">
+    <div className="min-h-screen flex flex-col xl:flex-row dark:bg-gray-900">
 
       <ProfileLeftSidebar
         onLogout={handleLogout}
