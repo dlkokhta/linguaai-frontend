@@ -61,13 +61,13 @@ export const TensesQuizPage = () => {
     return "?";
   };
 
-  const handleStart = async (tenseName: string, formula: string, level: QuizLevel) => {
+  const handleStart = async (tenseName: string, formula: string, whenToUse: string, level: QuizLevel) => {
     setLoading(true);
     setError(null);
     try {
       const res = await axiosInstance.post<{ questions: QuizQuestionType[] }>(
         "/generate/quiz",
-        { tense: tenseName, formula, level }
+        { tense: tenseName, formula, whenToUse, level }
       );
       const normalized = res.data.questions.map((q) => ({
         ...q,
