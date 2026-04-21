@@ -4,6 +4,7 @@ import {
   Bookmark, BookMarked, BrainCircuit, FileText, GraduationCap, Languages,
   LayoutDashboard, LogOut, Menu, Settings, Trophy, Wand2, X,
 } from "lucide-react";
+import { PomodoroTimer } from "../../../components/PomodoroTimer";
 import { ROUTES } from "../../../constants";
 
 interface UserProfile {
@@ -100,6 +101,11 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
               {item.label}
             </button>
           ))}
+        </div>
+
+        <div className="xl:hidden">
+          <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide px-2 mb-2">Focus Timer</p>
+          <PomodoroTimer />
         </div>
       </nav>
 
