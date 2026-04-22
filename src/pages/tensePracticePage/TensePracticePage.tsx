@@ -71,7 +71,11 @@ export const TensePracticePage = () => {
         "/generate/tense-practice",
         { tenses, topic }
       );
-      setQuestions(res.data.questions);
+      const shuffled = res.data.questions.map((q) => ({
+        ...q,
+        options: [...q.options].sort(() => Math.random() - 0.5),
+      }));
+      setQuestions(shuffled);
       setCurrentIndex(0);
       setPhase("practice");
     } catch {

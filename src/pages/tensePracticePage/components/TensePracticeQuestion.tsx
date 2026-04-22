@@ -109,17 +109,19 @@ const WordBankMode = ({
       ) : (
         <div className="flex flex-wrap gap-2 justify-center">
           {question.options.map((word, i) => {
-            if (usedIndices.has(i)) return null;
+            const used = usedIndices.has(i);
             return (
               <button
                 key={i}
                 type="button"
                 onClick={() => handleClick(word, i)}
-                disabled={blocked}
-                className={`cursor-pointer px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
-                  wrongWord === word
-                    ? "bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-700 text-red-600 dark:text-red-400"
-                    : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-300 disabled:opacity-50"
+                disabled={blocked || used}
+                className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+                  used
+                    ? "invisible"
+                    : wrongWord === word
+                    ? "cursor-pointer bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-700 text-red-600 dark:text-red-400"
+                    : "cursor-pointer bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-300 disabled:opacity-50"
                 }`}
               >
                 {word}
