@@ -19,4 +19,5 @@ export const ROUTES = {
   Tenses: "/tenses",
   TenseDetail: "/tenses/:tenseId",
   TensesQuiz: "/tenses-quiz",
+  TensePractice: "/tense-practice",
 } as const;
