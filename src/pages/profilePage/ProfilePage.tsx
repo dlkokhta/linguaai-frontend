@@ -6,6 +6,7 @@ import { ProfileRightSidebar } from "./components/ProfileRightSidebar";
 import { EditProfileSection } from "./components/EditProfileSection";
 import { UpdatePasswordSection } from "./components/UpdatePasswordSection";
 import { TwoFactorSection } from "./components/TwoFactorSection";
+import { OverviewSection } from "./components/OverviewSection";
 
 interface UserProfile {
   id: string;
@@ -91,10 +92,12 @@ export const ProfilePage = () => {
           <main className="px-4 sm:px-6 py-6 max-w-2xl mx-auto space-y-4">
 
             {/* ── OVERVIEW TAB ── */}
-            {activeTab === "overview" && (
-              <div className="bg-white dark:bg-gray-800 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-10 text-center">
-                <p className="text-sm text-gray-400 dark:text-gray-500">Learning progress &amp; stats coming soon</p>
-              </div>
+            {activeTab === "overview" && profile && (
+              <OverviewSection
+                createdAt={profile.createdAt}
+                method={profile.method}
+                isTwoFactorEnabled={profile.isTwoFactorEnabled}
+              />
             )}
 
             {/* ── SETTINGS TAB ── */}
