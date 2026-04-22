@@ -1,4 +1,5 @@
 import { PomodoroTimer } from "../../../components/PomodoroTimer";
+import { TranslateWordWidget } from "../../../components/TranslateWordWidget";
 
 export const ProfileRightSidebar = () => {
   return (
@@ -55,21 +56,7 @@ export const ProfileRightSidebar = () => {
           </div>
         </div>
 
-        {/* Quick Practice */}
-        <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-emerald-50 dark:bg-gray-800 p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500 mb-3">Quick Practice</p>
-          <p className="text-sm text-gray-700 dark:text-gray-200 mb-3">
-            I am a <span className="inline-block w-16 border-b-2 border-gray-400 align-bottom" /> developer based in Georgia.
-          </p>
-          <input
-            type="text"
-            placeholder="Fill in the blank..."
-            className="w-full px-3 py-2 text-sm rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 mb-3"
-          />
-          <button className="cursor-pointer w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors">
-            Check Answer
-          </button>
-        </div>
+        <TranslateWordWidget />
 
       </div>
     </aside>
