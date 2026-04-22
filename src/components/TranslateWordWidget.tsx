@@ -124,7 +124,7 @@ export const TranslateWordWidget = () => {
                   disabled={saving}
                   className={`cursor-pointer p-1.5 rounded-lg transition-colors disabled:opacity-60 ${
                     savedId
-                      ? "text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                      ? "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/60"
                       : "text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                   title={savedId ? "Unsave" : "Save"}
