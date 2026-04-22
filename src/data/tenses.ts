@@ -223,9 +223,9 @@ export const DIFFICULTY_LABELS: Record<TenseDifficulty, string> = {
 };
 
 export const DIFFICULTY_COLORS: Record<TenseDifficulty, string> = {
-  basic: "text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-900/20",
-  intermediate: "text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-900/20",
-  advanced: "text-rose-600 bg-rose-50 dark:text-rose-600 dark:bg-rose-900/20",
+  basic: "bg-emerald-600 text-white border-emerald-600",
+  intermediate: "bg-amber-500 text-white border-amber-500",
+  advanced: "bg-rose-600 text-white border-rose-600",
 };
 
 export const GROUP_COLORS: Record<TenseGroup, string> = {

@@ -45,14 +45,14 @@ export const TensePracticeSetup = ({ onStart, loading }: Props) => {
               onClick={() => setMode(value)}
               className={`flex-1 px-4 py-3 rounded-xl border text-left transition-all cursor-pointer ${
                 mode === value
-                  ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
+                  ? "border-emerald-600 bg-emerald-600"
                   : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
               }`}
             >
-              <p className={`text-sm font-medium ${mode === value ? "text-emerald-700 dark:text-emerald-400" : "text-gray-700 dark:text-gray-300"}`}>
+              <p className={`text-sm font-medium ${mode === value ? "text-white" : "text-gray-700 dark:text-gray-300"}`}>
                 {label}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{desc}</p>
+              <p className={`text-xs mt-0.5 ${mode === value ? "text-emerald-100" : "text-gray-500 dark:text-gray-400"}`}>{desc}</p>
             </button>
           ))}
         </div>
@@ -79,7 +79,7 @@ export const TensePracticeSetup = ({ onStart, loading }: Props) => {
                     disabled={disabled}
                     className={`px-3 py-2 rounded-lg border text-xs font-medium text-left transition-all cursor-pointer ${
                       selected
-                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400"
+                        ? "border-emerald-600 bg-emerald-600 text-white"
                         : disabled
                         ? "border-gray-100 dark:border-gray-800 text-gray-300 dark:text-gray-600 cursor-not-allowed"
                         : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"

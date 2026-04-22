@@ -62,7 +62,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
   const navItemClass = (active: boolean) =>
     `cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
       active
-        ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400"
+        ? "bg-emerald-600 text-white"
         : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
     }`;
 
