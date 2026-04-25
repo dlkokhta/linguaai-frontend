@@ -7,18 +7,6 @@ import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
 import { ProfileRightSidebar } from "../profilePage/components/ProfileRightSidebar";
 
-interface UserProfile {
-  id: string;
-  firstname: string | null;
-  lastname: string | null;
-  email: string;
-  role: "REGULAR" | "ADMIN";
-  picture: string | null;
-  method: string;
-  createdAt: string;
-  isTwoFactorEnabled: boolean;
-}
-
 interface SavedWord {
   id: string;
   word: string;
@@ -29,9 +17,8 @@ interface SavedWord {
 
 export const SavedWordsPage = () => {
   const navigate = useNavigate();
-  const { setAccessToken } = useAuth();
+  const { setAccessToken, profile } = useAuth();
 
-  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [words, setWords] = useState<SavedWord[]>([]);
   const [loading, setLoading] = useState(true);
   const [revealedExamples, setRevealedExamples] = useState<Record<string, Set<number>>>({});
@@ -40,14 +27,6 @@ export const SavedWordsPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const profileRes = await axiosInstance.get<UserProfile>("/user/me");
-        setProfile(profileRes.data);
-      } catch {
-        navigate(ROUTES.Login);
-        return;
-      }
-
       try {
         const wordsRes = await axiosInstance.get<SavedWord[]>("/saved-words");
         setWords(wordsRes.data);
@@ -116,7 +95,7 @@ export const SavedWordsPage = () => {
 
       <ProfileLeftSidebar
         onLogout={handleLogout}
-        profile={profile ?? { firstname: null, lastname: null, email: "", role: "REGULAR", picture: null }}
+        profile={profile}
         getInitials={getInitials}
       />
 

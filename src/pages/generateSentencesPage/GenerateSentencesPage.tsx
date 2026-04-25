@@ -7,25 +7,11 @@ import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar
 import { ProfileRightSidebar } from "../profilePage/components/ProfileRightSidebar";
 import { Toast } from "../../components/Toast";
 
-interface UserProfile {
-  id: string;
-  firstname: string | null;
-  lastname: string | null;
-  email: string;
-  role: "REGULAR" | "ADMIN";
-  picture: string | null;
-  method: string;
-  createdAt: string;
-  isTwoFactorEnabled: boolean;
-}
-
 const STORAGE_KEY = "linguaai_generated_sentences";
 
 export const GenerateSentencesPage = () => {
   const navigate = useNavigate();
-  const { setAccessToken } = useAuth();
-
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const { setAccessToken, profile } = useAuth();
 
   const [topic, setTopic] = useState(() => {
     const saved = sessionStorage.getItem(STORAGE_KEY);
@@ -48,18 +34,6 @@ export const GenerateSentencesPage = () => {
   useEffect(() => {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ topic, difficulty, sentences }));
   }, [topic, difficulty, sentences]);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await axiosInstance.get<UserProfile>("/user/me");
-        setProfile(res.data);
-      } catch {
-        navigate(ROUTES.Login);
-      }
-    };
-    fetchProfile();
-  }, []);
 
   const speakText = (text: string) => {
     window.speechSynthesis.cancel();
@@ -137,7 +111,7 @@ export const GenerateSentencesPage = () => {
 
       <ProfileLeftSidebar
         onLogout={handleLogout}
-        profile={profile ?? { firstname: null, lastname: null, email: "", role: "REGULAR", picture: null }}
+        profile={profile}
         getInitials={getInitials}
       />
 

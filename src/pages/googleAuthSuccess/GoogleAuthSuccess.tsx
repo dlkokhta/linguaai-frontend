@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth, axiosInstance } from "../../context/AuthContext";
 
 function parseJwtPayload(token: string) {
   try {
@@ -14,7 +14,7 @@ function parseJwtPayload(token: string) {
 export const GoogleAuthSuccess = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setAccessToken } = useAuth();
+  const { setAccessToken, setProfile } = useAuth();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -22,6 +22,10 @@ export const GoogleAuthSuccess = () => {
 
     if (accessToken) {
       setAccessToken(accessToken);
+
+      axiosInstance.get("/user/me")
+        .then((res) => setProfile(res.data))
+        .catch(() => {});
 
       const payload = parseJwtPayload(accessToken);
       if (payload?.role === "ADMIN") {

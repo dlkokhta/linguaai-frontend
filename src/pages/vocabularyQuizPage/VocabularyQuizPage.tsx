@@ -6,17 +6,6 @@ import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
 import { ProfileRightSidebar } from "../profilePage/components/ProfileRightSidebar";
 
-interface UserProfile {
-  id: string;
-  firstname: string | null;
-  lastname: string | null;
-  email: string;
-  role: "REGULAR" | "ADMIN";
-  picture: string | null;
-  method: string;
-  createdAt: string;
-  isTwoFactorEnabled: boolean;
-}
 
 interface SavedWord {
   id: string;
@@ -59,9 +48,8 @@ function buildQuestions(deck: SavedWord[], allWords: SavedWord[]): QuizQuestion[
 
 export const VocabularyQuizPage = () => {
   const navigate = useNavigate();
-  const { setAccessToken } = useAuth();
+  const { setAccessToken, profile } = useAuth();
 
-  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [allWords, setAllWords] = useState<SavedWord[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -75,13 +63,6 @@ export const VocabularyQuizPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const profileRes = await axiosInstance.get<UserProfile>("/user/me");
-        setProfile(profileRes.data);
-      } catch {
-        navigate(ROUTES.Login);
-        return;
-      }
       try {
         const wordsRes = await axiosInstance.get<SavedWord[]>("/saved-words");
         setAllWords(wordsRes.data);
@@ -166,7 +147,7 @@ export const VocabularyQuizPage = () => {
 
       <ProfileLeftSidebar
         onLogout={handleLogout}
-        profile={profile ?? { firstname: null, lastname: null, email: "", role: "REGULAR", picture: null }}
+        profile={profile}
         getInitials={getInitials}
       />
 

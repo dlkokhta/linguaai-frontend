@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ShieldCheck } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth, axiosInstance } from "../../context/AuthContext";
 import axios from "axios";
 
 export const TwoFactorVerifyPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setAccessToken } = useAuth();
+  const { setAccessToken, setProfile } = useAuth();
 
   const tempToken: string | undefined = (location.state as { tempToken?: string })?.tempToken;
 
@@ -33,6 +33,10 @@ export const TwoFactorVerifyPage = () => {
         { withCredentials: true },
       );
       setAccessToken(res.data.accessToken);
+      try {
+        const profileRes = await axiosInstance.get("/user/me");
+        setProfile(profileRes.data);
+      } catch {}
       if (res.data.user.role === "ADMIN") {
         navigate("/adminPanel");
       } else {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
@@ -9,18 +9,6 @@ import { TENSES, DIFFICULTY_COLORS, DIFFICULTY_LABELS } from "../../data/tenses"
 import { TenseLearnTab } from "./components/TenseLearnTab";
 import { TensePracticeTab } from "./components/TensePracticeTab";
 import { TenseQuizTab } from "./components/TenseQuizTab";
-
-interface UserProfile {
-  id: string;
-  firstname: string | null;
-  lastname: string | null;
-  email: string;
-  role: "REGULAR" | "ADMIN";
-  picture: string | null;
-  method: string;
-  createdAt: string;
-  isTwoFactorEnabled: boolean;
-}
 
 type Tab = "learn" | "practice" | "quiz";
 
@@ -33,27 +21,11 @@ const TABS: { id: Tab; label: string }[] = [
 export const TenseDetailPage = () => {
   const navigate = useNavigate();
   const { tenseId } = useParams<{ tenseId: string }>();
-  const { setAccessToken } = useAuth();
+  const { setAccessToken, profile } = useAuth();
 
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("learn");
 
   const tense = TENSES.find((t) => t.id === tenseId);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await axiosInstance.get<UserProfile>("/user/me");
-        setProfile(res.data);
-      } catch {
-        navigate(ROUTES.Login);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfile();
-  }, []);
 
   const handleLogout = async () => {
     try {
@@ -75,19 +47,11 @@ export const TenseDetailPage = () => {
     return "?";
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center dark:bg-gray-900">
-        <p className="text-gray-500 dark:text-gray-400">Loading...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col xl:flex-row dark:bg-gray-900">
       <ProfileLeftSidebar
         onLogout={handleLogout}
-        profile={profile ?? { firstname: null, lastname: null, email: "", role: "REGULAR", picture: null }}
+        profile={profile}
         getInitials={getInitials}
       />
 

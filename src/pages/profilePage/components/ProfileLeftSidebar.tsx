@@ -19,7 +19,7 @@ interface Props {
   activeTab?: "overview" | "settings";
   onTabChange?: (tab: "overview" | "settings") => void;
   onLogout: () => void;
-  profile: UserProfile;
+  profile: UserProfile | null;
   getInitials: () => string;
 }
 
@@ -29,7 +29,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
   const [open, setOpen] = useState(false);
 
   const fullName =
-    profile.firstname || profile.lastname
+    profile?.firstname || profile?.lastname
       ? `${profile.firstname ?? ""} ${profile.lastname ?? ""}`.trim()
       : "No name set";
 
@@ -104,7 +104,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
           ))}
         </div>
 
-        {profile.role === "ADMIN" && (
+        {profile?.role === "ADMIN" && (
           <div className="space-y-0.5">
             <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide px-2 mb-1">Admin</p>
             <button
@@ -125,16 +125,28 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
 
       <div className="border-t border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3 px-4 py-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shrink-0 text-xs font-bold text-white overflow-hidden">
-            {profile.picture
-              ? <img src={profile.picture} alt="avatar" className="w-full h-full object-cover rounded-full" />
-              : getInitials()
-            }
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{fullName}</p>
-            <p className="text-xs text-gray-400 truncate">{profile.email}</p>
-          </div>
+          {profile ? (
+            <>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shrink-0 text-xs font-bold text-white overflow-hidden">
+                {profile.picture
+                  ? <img src={profile.picture} alt="avatar" className="w-full h-full object-cover rounded-full" />
+                  : getInitials()
+                }
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{fullName}</p>
+                <p className="text-xs text-gray-400 truncate">{profile.email}</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 shrink-0 animate-pulse" />
+              <div className="min-w-0 flex-1 space-y-1.5">
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-24" />
+                <div className="h-2.5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-32" />
+              </div>
+            </>
+          )}
         </div>
         <div className="px-3 pb-3">
           <button
@@ -196,7 +208,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
             ))}
           </div>
 
-          {profile.role === "ADMIN" && (
+          {profile?.role === "ADMIN" && (
             <div className="space-y-0.5">
               <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide px-2 mb-1">Admin</p>
               <button
@@ -212,16 +224,28 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
 
         <div className="border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3 px-4 py-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shrink-0 text-xs font-bold text-white overflow-hidden">
-              {profile.picture
-                ? <img src={profile.picture} alt="avatar" className="w-full h-full object-cover rounded-full" />
-                : getInitials()
-              }
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{fullName}</p>
-              <p className="text-xs text-gray-400 truncate">{profile.email}</p>
-            </div>
+            {profile ? (
+              <>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shrink-0 text-xs font-bold text-white overflow-hidden">
+                  {profile.picture
+                    ? <img src={profile.picture} alt="avatar" className="w-full h-full object-cover rounded-full" />
+                    : getInitials()
+                  }
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{fullName}</p>
+                  <p className="text-xs text-gray-400 truncate">{profile.email}</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 shrink-0 animate-pulse" />
+                <div className="min-w-0 flex-1 space-y-1.5">
+                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-24" />
+                  <div className="h-2.5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-32" />
+                </div>
+              </>
+            )}
           </div>
           <div className="px-3 pb-3">
             <button

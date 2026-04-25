@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PenLine } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
@@ -12,36 +12,16 @@ import type { TensePracticeQuestion as TensePracticeQuestionType } from "./compo
 type Phase = "setup" | "practice" | "complete";
 type Mode = "word-bank" | "typing";
 
-interface UserProfile {
-  id: string;
-  firstname: string | null;
-  lastname: string | null;
-  email: string;
-  role: "REGULAR" | "ADMIN";
-  picture: string | null;
-  method: string;
-  createdAt: string;
-  isTwoFactorEnabled: boolean;
-}
-
 export const TensePracticePage = () => {
   const navigate = useNavigate();
-  const { setAccessToken } = useAuth();
+  const { setAccessToken, profile } = useAuth();
 
-  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [phase, setPhase] = useState<Phase>("setup");
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<TensePracticeQuestionType[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mode, setMode] = useState<Mode>("word-bank");
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    axiosInstance
-      .get<UserProfile>("/user/me")
-      .then((res) => setProfile(res.data))
-      .catch(() => navigate(ROUTES.Login));
-  }, []);
 
   const handleLogout = async () => {
     try {
@@ -104,7 +84,7 @@ export const TensePracticePage = () => {
     <div className="h-screen overflow-hidden flex flex-col xl:flex-row dark:bg-gray-900">
       <ProfileLeftSidebar
         onLogout={handleLogout}
-        profile={profile ?? { firstname: null, lastname: null, email: "", role: "REGULAR", picture: null }}
+        profile={profile}
         getInitials={getInitials}
       />
 

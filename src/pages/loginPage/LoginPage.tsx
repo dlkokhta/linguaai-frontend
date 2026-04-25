@@ -3,7 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth, axiosInstance } from "../../context/AuthContext";
 import type { loginTypes } from "../../types/loginTypes";
 import { loginSchema } from "../../schemas";
 import { Mail, Lock, Sparkles, Volume2, Languages, BookOpen } from "lucide-react";
@@ -11,7 +11,7 @@ import GoogleButton from "../../components/GoogleButton";
 
 export const LoginPage = () => {
   const [responseError, setResponseError] = useState<string | null>(null);
-  const { setAccessToken } = useAuth();
+  const { setAccessToken, setProfile } = useAuth();
   const navigate = useNavigate();
   const {
     register,
@@ -43,6 +43,10 @@ export const LoginPage = () => {
 
       const accessToken = response.data.accessToken;
       setAccessToken(accessToken);
+      try {
+        const profileRes = await axiosInstance.get("/user/me");
+        setProfile(profileRes.data);
+      } catch {}
 
       if (response.data.user.role === "ADMIN") {
         navigate("/adminPanel");

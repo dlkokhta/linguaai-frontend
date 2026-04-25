@@ -7,18 +7,6 @@ import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
 import { ProfileRightSidebar } from "../profilePage/components/ProfileRightSidebar";
 
-interface UserProfile {
-  id: string;
-  firstname: string | null;
-  lastname: string | null;
-  email: string;
-  role: "REGULAR" | "ADMIN";
-  picture: string | null;
-  method: string;
-  createdAt: string;
-  isTwoFactorEnabled: boolean;
-}
-
 interface SavedSentence {
   id: string;
   en: string;
@@ -29,9 +17,8 @@ interface SavedSentence {
 
 export const SavedSentencesPage = () => {
   const navigate = useNavigate();
-  const { setAccessToken } = useAuth();
+  const { setAccessToken, profile } = useAuth();
 
-  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [sentences, setSentences] = useState<SavedSentence[]>([]);
   const [loading, setLoading] = useState(true);
   const [revealedTranslations, setRevealedTranslations] = useState<Set<string>>(new Set());
@@ -40,18 +27,10 @@ export const SavedSentencesPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const profileRes = await axiosInstance.get<UserProfile>("/user/me");
-        setProfile(profileRes.data);
-      } catch {
-        navigate(ROUTES.Login);
-        return;
-      }
-
-      try {
         const sentencesRes = await axiosInstance.get<SavedSentence[]>("/saved-sentences");
         setSentences(sentencesRes.data);
       } catch {
-        // saved sentences failed, show empty state
+        // show empty state
       } finally {
         setLoading(false);
       }
@@ -106,7 +85,7 @@ export const SavedSentencesPage = () => {
 
       <ProfileLeftSidebar
         onLogout={handleLogout}
-        profile={profile ?? { firstname: null, lastname: null, email: "", role: "REGULAR", picture: null }}
+        profile={profile}
         getInitials={getInitials}
       />
 

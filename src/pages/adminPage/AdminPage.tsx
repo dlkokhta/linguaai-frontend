@@ -14,26 +14,13 @@ interface User {
   createdAt: string;
 }
 
-interface UserProfile {
-  id: string;
-  firstname: string | null;
-  lastname: string | null;
-  email: string;
-  role: "REGULAR" | "ADMIN";
-  picture: string | null;
-  method: string;
-  createdAt: string;
-  isTwoFactorEnabled: boolean;
-}
-
 export const AdminPage = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loadingRoleId, setLoadingRoleId] = useState<string | null>(null);
   const [confirmingUser, setConfirmingUser] = useState<User | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
   const navigate = useNavigate();
-  const { setAccessToken } = useAuth();
+  const { setAccessToken, profile } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -58,11 +45,7 @@ export const AdminPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, usersRes] = await Promise.all([
-          axiosInstance.get<UserProfile>("/user/me"),
-          axiosInstance.get<User[]>("/admin/users"),
-        ]);
-        setProfile(profileRes.data);
+        const usersRes = await axiosInstance.get<User[]>("/admin/users");
         setUsers(usersRes.data);
       } catch {
         navigate("/login");
@@ -106,14 +89,6 @@ export const AdminPage = () => {
       })
       .catch(() => setDeletingId(null));
   };
-
-  if (!profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center dark:bg-gray-900">
-        <p className="text-gray-500 dark:text-gray-400">Loading...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col xl:flex-row dark:bg-gray-900">

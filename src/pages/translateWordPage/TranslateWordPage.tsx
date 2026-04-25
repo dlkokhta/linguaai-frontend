@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bookmark, Languages, Loader2, Volume2 } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
@@ -7,18 +6,6 @@ import { ROUTES } from "../../constants";
 import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
 import { ProfileRightSidebar } from "../profilePage/components/ProfileRightSidebar";
 import { Toast } from "../../components/Toast";
-
-interface UserProfile {
-  id: string;
-  firstname: string | null;
-  lastname: string | null;
-  email: string;
-  role: "REGULAR" | "ADMIN";
-  picture: string | null;
-  method: string;
-  createdAt: string;
-  isTwoFactorEnabled: boolean;
-}
 
 interface TranslationResult {
   word: string;
@@ -28,9 +15,8 @@ interface TranslationResult {
 
 export const TranslateWordPage = () => {
   const navigate = useNavigate();
-  const { setAccessToken } = useAuth();
+  const { setAccessToken, profile } = useAuth();
 
-  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [word, setWord] = useState("");
   const [result, setResult] = useState<TranslationResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -39,18 +25,6 @@ export const TranslateWordPage = () => {
   const [savedId, setSavedId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await axiosInstance.get<UserProfile>("/user/me");
-        setProfile(res.data);
-      } catch {
-        navigate(ROUTES.Login);
-      }
-    };
-    fetchProfile();
-  }, []);
 
   const handleLogout = async () => {
     try {
@@ -135,7 +109,7 @@ export const TranslateWordPage = () => {
 
       <ProfileLeftSidebar
         onLogout={handleLogout}
-        profile={profile ?? { firstname: null, lastname: null, email: "", role: "REGULAR", picture: null }}
+        profile={profile}
         getInitials={getInitials}
       />
 
