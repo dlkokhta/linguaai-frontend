@@ -45,7 +45,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const setAccessToken = (token: string | null) => {
     tokenRef.current = token;
     setAccessTokenState(token);
-    if (!token) setProfile(null);
+    if (token) {
+      localStorage.setItem("wasLoggedIn", "true");
+    } else {
+      localStorage.removeItem("wasLoggedIn");
+      setProfile(null);
+    }
   };
 
   useEffect(() => {

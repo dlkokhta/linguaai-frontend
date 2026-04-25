@@ -19,7 +19,10 @@ function parseJwtPayload(token: string) {
 export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   const { accessToken, isLoading } = useAuth();
 
-  if (isLoading) return null;
+  if (isLoading) {
+    if (!localStorage.getItem("wasLoggedIn")) return <Navigate to="/login" replace />;
+    return <>{children}</>;
+  }
 
   if (!accessToken) {
     return <Navigate to="/login" replace />;
