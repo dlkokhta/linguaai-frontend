@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronDown, Lock, Shield } from "lucide-react";
 import { axiosInstance } from "../../../context/AuthContext";
+import { getErrorMessage } from "../../../types/errors";
 
 export const UpdatePasswordSection = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,8 +28,8 @@ export const UpdatePasswordSection = () => {
       setNewPassword("");
       setConfirmPassword("");
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err?.response?.data?.message ?? "Failed to change password");
+    } catch (err) {
+      setError(getErrorMessage(err, "Failed to change password"));
     } finally {
       setSaving(false);
     }

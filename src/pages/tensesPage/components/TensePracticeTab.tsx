@@ -3,6 +3,7 @@ import { Bookmark, Languages, Loader2, Volume2, Wand2 } from "lucide-react";
 import { axiosInstance } from "../../../context/AuthContext";
 import { Toast } from "../../../components/Toast";
 import type { Tense, TenseDifficulty } from "../../../data/tenses";
+import { speakText } from "../../../utils/audio";
 
 interface Props {
   tense: Tense;
@@ -14,14 +15,6 @@ const DIFFICULTY_MAP: Record<TenseDifficulty, Difficulty> = {
   basic:        "beginner",
   intermediate: "intermediate",
   advanced:     "advanced",
-};
-
-const speakText = (text: string) => {
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  utterance.rate = 0.9;
-  window.speechSynthesis.speak(utterance);
 };
 
 export const TensePracticeTab = ({ tense }: Props) => {

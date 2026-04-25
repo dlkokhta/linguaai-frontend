@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
+import { speakText } from "../../../utils/audio";
 
 export interface QuizQuestion {
   display: string;
@@ -14,14 +15,6 @@ interface Props {
   total: number;
   onNext: () => void;
 }
-
-const speakText = (text: string) => {
-  window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = "en-US";
-  utt.rate = 0.9;
-  window.speechSynthesis.speak(utt);
-};
 
 export const QuizQuestion = ({ question, questionNumber, total, onNext }: Props) => {
   const [filled, setFilled] = useState<string[]>([]);

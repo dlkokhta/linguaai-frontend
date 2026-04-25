@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Pencil } from "lucide-react";
 import { PomodoroTimer } from "../../../components/PomodoroTimer";
 import { TranslateWordWidget } from "../../../components/TranslateWordWidget";
-import { axiosInstance, useAuth } from "../../../context/AuthContext";
+import { axiosInstance } from "../../../context/AuthContext";
 
 interface WeeklyProgress {
   sentenceGoal: number | null;
@@ -12,32 +13,32 @@ interface WeeklyProgress {
 }
 
 export const ProfileRightSidebar = () => {
-  const { accessToken } = useAuth();
-  const [progress, setProgress] = useState<WeeklyProgress | null>(null);
+  const queryClient = useQueryClient();
   const [setting, setSetting] = useState(false);
   const [sentenceInput, setSentenceInput] = useState("");
   const [wordInput, setWordInput] = useState("");
 
-  useEffect(() => {
-    if (!accessToken) return;
-    axiosInstance.get<WeeklyProgress>("/weekly-goal")
-      .then((res) => setProgress(res.data))
-      .catch(() => {});
-  }, [accessToken]);
+  const { data: progress } = useQuery({
+    queryKey: ["weekly-goal"],
+    queryFn: () => axiosInstance.get<WeeklyProgress>("/weekly-goal").then((r) => r.data),
+  });
 
-  const handleSave = async () => {
-    const sentenceGoal = parseInt(sentenceInput);
-    const wordGoal = parseInt(wordInput);
-    if (!sentenceGoal || !wordGoal || sentenceGoal < 1 || wordGoal < 1) return;
-
-    try {
-      await axiosInstance.post("/weekly-goal", { sentenceGoal, wordGoal });
-      const res = await axiosInstance.get<WeeklyProgress>("/weekly-goal");
-      setProgress(res.data);
+  const saveMutation = useMutation({
+    mutationFn: (goal: { sentenceGoal: number; wordGoal: number }) =>
+      axiosInstance.post("/weekly-goal", goal),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["weekly-goal"] });
       setSetting(false);
       setSentenceInput("");
       setWordInput("");
-    } catch {}
+    },
+  });
+
+  const handleSave = () => {
+    const sentenceGoal = parseInt(sentenceInput);
+    const wordGoal = parseInt(wordInput);
+    if (!sentenceGoal || !wordGoal || sentenceGoal < 1 || wordGoal < 1) return;
+    saveMutation.mutate({ sentenceGoal, wordGoal });
   };
 
   const sentencePct = progress?.sentenceGoal
@@ -114,7 +115,8 @@ export const ProfileRightSidebar = () => {
               <div className="flex gap-2">
                 <button
                   onClick={handleSave}
-                  className="cursor-pointer flex-1 py-1.5 text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+                  disabled={saveMutation.isPending}
+                  className="cursor-pointer flex-1 py-1.5 text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors disabled:opacity-60"
                 >
                   Save
                 </button>
@@ -140,7 +142,7 @@ export const ProfileRightSidebar = () => {
             </div>
           </div>
 
-          {/* Progress bars — only shown when goal is set */}
+          {/* Progress bars */}
           {goalIsSet && (
             <div className="space-y-2">
               <div>

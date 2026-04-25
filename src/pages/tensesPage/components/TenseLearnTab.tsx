@@ -1,17 +1,10 @@
 import { Volume2 } from "lucide-react";
 import type { Tense } from "../../../data/tenses";
+import { speakText } from "../../../utils/audio";
 
 interface Props {
   tense: Tense;
 }
-
-const speakText = (text: string) => {
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  utterance.rate = 0.9;
-  window.speechSynthesis.speak(utterance);
-};
 
 export const TenseLearnTab = ({ tense }: Props) => {
   return (

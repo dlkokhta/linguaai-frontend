@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronDown, Save, User } from "lucide-react";
 import { axiosInstance } from "../../../context/AuthContext";
+import { getErrorMessage } from "../../../types/errors";
 
 interface UserProfile {
   id: string;
@@ -38,8 +39,8 @@ export const EditProfileSection = ({ initialFirstName, initialLastName, onProfil
       onProfileUpdate(res.data);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err?.response?.data?.message ?? "Failed to save changes");
+    } catch (err) {
+      setError(getErrorMessage(err, "Failed to save changes"));
     } finally {
       setSaving(false);
     }

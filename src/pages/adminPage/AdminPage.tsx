@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosInstance } from "../../context/AuthContext";
 
 interface User {
@@ -14,38 +15,38 @@ interface User {
 }
 
 export const AdminPage = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [loadingRoleId, setLoadingRoleId] = useState<string | null>(null);
   const [confirmingUser, setConfirmingUser] = useState<User | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const usersRes = await axiosInstance.get<User[]>("/admin/users");
-        setUsers(usersRes.data);
-      } catch {
-        navigate("/login");
-      }
-    };
-    fetchData();
-  }, [navigate]);
+  const { data: users = [] } = useQuery({
+    queryKey: ["admin-users"],
+    queryFn: () => axiosInstance.get<User[]>("/admin/users").then((r) => r.data),
+    throwOnError: () => { navigate("/login"); return false; },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => axiosInstance.delete(`/admin/users/${id}`),
+    onSuccess: (_, id) => {
+      queryClient.setQueryData<User[]>(["admin-users"], (prev) =>
+        prev?.filter((u) => u.id !== id) ?? []
+      );
+    },
+  });
 
   const handleRoleChange = (user: User, newRole: string) => {
     if (user.role === newRole) return;
-
-    setUsers((prev) =>
-      prev.map((u) => (u.id === user.id ? { ...u, role: newRole } : u))
-    );
     setLoadingRoleId(user.id);
-
+    queryClient.setQueryData<User[]>(["admin-users"], (prev) =>
+      prev?.map((u) => (u.id === user.id ? { ...u, role: newRole } : u)) ?? []
+    );
     axiosInstance
       .patch(`/admin/users/${user.id}/role`, { role: newRole })
       .then(() => setLoadingRoleId(null))
       .catch(() => {
-        setUsers((prev) =>
-          prev.map((u) => (u.id === user.id ? { ...u, role: user.role } : u))
+        queryClient.setQueryData<User[]>(["admin-users"], (prev) =>
+          prev?.map((u) => (u.id === user.id ? { ...u, role: user.role } : u)) ?? []
         );
         setLoadingRoleId(null);
       });
@@ -58,14 +59,7 @@ export const AdminPage = () => {
     if (!confirmingUser) return;
     const id = confirmingUser.id;
     setConfirmingUser(null);
-    setDeletingId(id);
-    axiosInstance
-      .delete(`/admin/users/${id}`)
-      .then(() => {
-        setUsers((prev) => prev.filter((u) => u.id !== id));
-        setDeletingId(null);
-      })
-      .catch(() => setDeletingId(null));
+    deleteMutation.mutate(id);
   };
 
   return (
@@ -155,10 +149,10 @@ export const AdminPage = () => {
                     <td className="px-4 py-3 text-sm">
                       <button
                         onClick={() => handleDeleteClick(user)}
-                        disabled={deletingId === user.id}
+                        disabled={deleteMutation.isPending}
                         className="cursor-pointer px-3 py-1 text-xs font-medium text-red-600 bg-red-50 rounded hover:bg-red-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {deletingId === user.id ? "..." : "Delete"}
+                        {deleteMutation.isPending ? "..." : "Delete"}
                       </button>
                     </td>
                   </tr>

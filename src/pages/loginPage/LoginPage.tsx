@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useAuth, axiosInstance } from "../../context/AuthContext";
 import type { loginTypes } from "../../types/loginTypes";
 import { loginSchema } from "../../schemas";
+import { getErrorMessage } from "../../types/errors";
 import { Mail, Lock, Sparkles, Volume2, Languages, BookOpen } from "lucide-react";
 import GoogleButton from "../../components/GoogleButton";
 
@@ -55,12 +56,8 @@ export const LoginPage = () => {
       }
 
       reset();
-    } catch (error: any) {
-      if (error?.response?.data?.message) {
-        setResponseError(error.response.data.message);
-      } else {
-        setResponseError("An error occurred. Please try again.");
-      }
+    } catch (error) {
+      setResponseError(getErrorMessage(error, "An error occurred. Please try again."));
     }
   };
 

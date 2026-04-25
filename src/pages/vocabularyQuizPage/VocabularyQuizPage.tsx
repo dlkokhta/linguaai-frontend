@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { BookOpen, RotateCcw, Volume2 } from "lucide-react";
 import { axiosInstance } from "../../context/AuthContext";
 import { ROUTES } from "../../constants";
+import { speakText } from "../../utils/audio";
 
 interface SavedWord {
   id: string;
@@ -46,8 +48,6 @@ function buildQuestions(deck: SavedWord[], allWords: SavedWord[]): QuizQuestion[
 export const VocabularyQuizPage = () => {
   const navigate = useNavigate();
 
-  const [allWords, setAllWords] = useState<SavedWord[]>([]);
-  const [loading, setLoading] = useState(true);
   const [screen, setScreen] = useState<Screen>("setup");
   const [mode, setMode] = useState<Mode>("all");
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -56,19 +56,10 @@ export const VocabularyQuizPage = () => {
   const [score, setScore] = useState(0);
   const [wrongWords, setWrongWords] = useState<SavedWord[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const wordsRes = await axiosInstance.get<SavedWord[]>("/saved-words");
-        setAllWords(wordsRes.data);
-      } catch {
-        // show empty state
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const { data: allWords = [], isLoading } = useQuery({
+    queryKey: ["saved-words"],
+    queryFn: () => axiosInstance.get<SavedWord[]>("/saved-words").then((r) => r.data),
+  });
 
   const startQuiz = () => {
     const deck = filterByMode(allWords, mode);
@@ -88,14 +79,6 @@ export const VocabularyQuizPage = () => {
     } else {
       setWrongWords((prev) => [...prev, questions[currentIndex].correct]);
     }
-  };
-
-  const speakText = (text: string) => {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "en-US";
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
   };
 
   const handleNext = () => {
@@ -126,13 +109,13 @@ export const VocabularyQuizPage = () => {
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Vocabulary Quiz</h1>
         </div>
 
-        {loading && (
+        {isLoading && (
           <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-10 text-center">
             <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
           </div>
         )}
 
-        {!loading && screen === "setup" && (
+        {!isLoading && screen === "setup" && (
           <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 space-y-5">
             {allWords.length < 4 ? (
               <div className="text-center py-8">

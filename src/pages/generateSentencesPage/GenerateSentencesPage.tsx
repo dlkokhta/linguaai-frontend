@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Bookmark, Languages, Loader2, Volume2, Wand2 } from "lucide-react";
 import { axiosInstance } from "../../context/AuthContext";
 import { Toast } from "../../components/Toast";
+import { speakText } from "../../utils/audio";
 
 const STORAGE_KEY = "linguaai_generated_sentences";
 
@@ -28,13 +29,6 @@ export const GenerateSentencesPage = () => {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ topic, difficulty, sentences }));
   }, [topic, difficulty, sentences]);
 
-  const speakText = (text: string) => {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "en-US";
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
-  };
 
   const toggleTranslation = (index: number) => {
     setRevealedTranslations((prev) => {

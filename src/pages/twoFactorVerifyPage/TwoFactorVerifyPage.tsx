@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ShieldCheck } from "lucide-react";
 import { useAuth, axiosInstance } from "../../context/AuthContext";
 import axios from "axios";
+import { getErrorMessage } from "../../types/errors";
 
 export const TwoFactorVerifyPage = () => {
   const navigate = useNavigate();
@@ -42,8 +43,8 @@ export const TwoFactorVerifyPage = () => {
       } else {
         navigate("/profile");
       }
-    } catch (err: any) {
-      setError(err?.response?.data?.message ?? "Invalid code. Please try again.");
+    } catch (err) {
+      setError(getErrorMessage(err, "Invalid code. Please try again."));
     } finally {
       setLoading(false);
     }

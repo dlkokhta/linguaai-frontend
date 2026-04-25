@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronDown, ShieldCheck, ShieldOff } from "lucide-react";
 import { axiosInstance } from "../../../context/AuthContext";
+import { getErrorMessage } from "../../../types/errors";
 
 interface Props {
   isTwoFactorEnabled: boolean;
@@ -23,8 +24,8 @@ export const TwoFactorSection = ({ isTwoFactorEnabled, onToggle }: Props) => {
       const res = await axiosInstance.post<{ qrCodeDataURL: string }>("/auth/2fa/generate");
       setQrCode(res.data.qrCodeDataURL);
       setSetupMode(true);
-    } catch (err: any) {
-      setError(err?.response?.data?.message ?? "Failed to generate QR code");
+    } catch (err) {
+      setError(getErrorMessage(err, "Failed to generate QR code"));
     } finally {
       setLoading(false);
     }
@@ -42,8 +43,8 @@ export const TwoFactorSection = ({ isTwoFactorEnabled, onToggle }: Props) => {
       setCode("");
       setSuccess("2FA enabled! Your account is now protected.");
       setTimeout(() => setSuccess(null), 4000);
-    } catch (err: any) {
-      setError(err?.response?.data?.message ?? "Invalid code. Please try again.");
+    } catch (err) {
+      setError(getErrorMessage(err, "Invalid code. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -60,8 +61,8 @@ export const TwoFactorSection = ({ isTwoFactorEnabled, onToggle }: Props) => {
       setSetupMode(false);
       setSuccess("2FA has been disabled.");
       setTimeout(() => setSuccess(null), 4000);
-    } catch (err: any) {
-      setError(err?.response?.data?.message ?? "Invalid code. Please try again.");
+    } catch (err) {
+      setError(getErrorMessage(err, "Invalid code. Please try again."));
     } finally {
       setLoading(false);
     }

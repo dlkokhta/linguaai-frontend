@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Lock } from "lucide-react";
 import { resetPasswordSchema } from "../../schemas";
 import { ROUTES } from "../../constants";
+import { getErrorMessage } from "../../types/errors";
 
 export const ResetPasswordPage = () => {
   const navigate = useNavigate();
@@ -43,11 +44,8 @@ export const ResetPasswordPage = () => {
         passwordRepeat: data.passwordRepeat,
       });
       setSuccess(true);
-    } catch (error: any) {
-      setServerError(
-        error?.response?.data?.message ??
-          "An error occurred. Please try again."
-      );
+    } catch (error) {
+      setServerError(getErrorMessage(error, "An error occurred. Please try again."));
     }
   };
 

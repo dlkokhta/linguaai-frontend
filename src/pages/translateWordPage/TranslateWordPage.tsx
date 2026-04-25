@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Bookmark, Languages, Loader2, Volume2 } from "lucide-react";
 import { axiosInstance } from "../../context/AuthContext";
 import { Toast } from "../../components/Toast";
+import { speakText } from "../../utils/audio";
 
 interface TranslationResult {
   word: string;
@@ -44,14 +45,6 @@ export const TranslateWordPage = () => {
       else next.add(index);
       return next;
     });
-  };
-
-  const speakText = (text: string) => {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "en-US";
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
   };
 
   const handleSave = async () => {

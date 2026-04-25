@@ -3,6 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { getErrorMessage } from "../../types/errors";
 import { RegistrationSuccess } from "../../components/RegistrationSuccess.js";
 import { registrationSchema } from "../../schemas/index.js";
 import GoogleButton from "../../components/GoogleButton.js";
@@ -40,15 +41,8 @@ export const RegistrationPage = () => {
       console.log("Registration response:", response.data);
       setResponseMessage("Registration successful!");
       reset();
-    } catch (error: any) {
-      const message = error?.response?.data?.message;
-      if (Array.isArray(message)) {
-        setResponseError(message[0]);
-      } else if (typeof message === "string") {
-        setResponseError(message);
-      } else {
-        setResponseError("Registration failed. Please try again.");
-      }
+    } catch (error) {
+      setResponseError(getErrorMessage(error, "Registration failed. Please try again."));
     }
   };
 

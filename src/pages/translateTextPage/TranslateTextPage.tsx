@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Bookmark, Check, Copy, FileText, Loader2, Volume2 } from "lucide-react";
 import { axiosInstance } from "../../context/AuthContext";
 import { Toast } from "../../components/Toast";
+import { speakText } from "../../utils/audio";
 
 export const TranslateTextPage = () => {
   const [text, setText] = useState("");
@@ -70,14 +71,6 @@ export const TranslateTextPage = () => {
     await navigator.clipboard.writeText(translation);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const speakText = (content: string) => {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(content);
-    utterance.lang = "en-US";
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
   };
 
   return (
