@@ -41,6 +41,7 @@ LinguaAI is an AI-powered English language learning platform built for Georgian 
 - **Vocabulary Quiz** — test your saved vocabulary knowledge
 - **Tenses** — learn all 12 English tenses with formulas, explanations in Georgian, and examples
 - **Tenses Quiz** — AI-generated fill-in-the-blank quiz per tense and difficulty level; word bank with click-to-fill interaction and text-to-speech on completion
+- **Weekly Goal** — set weekly sentence and word targets; progress bars update in real time based on saves made since Monday
 
 ### Auth & Platform
 - Register & login with email/password
