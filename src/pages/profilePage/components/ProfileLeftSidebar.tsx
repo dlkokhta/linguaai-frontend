@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Bookmark, BookMarked, BrainCircuit, FileText, GraduationCap, Languages,
-  LayoutDashboard, LogOut, Menu, PenLine, Settings, Trophy, Wand2, X,
+  LayoutDashboard, LogOut, Menu, PenLine, Settings, ShieldCheck, Trophy, Wand2, X,
 } from "lucide-react";
 import { PomodoroTimer } from "../../../components/PomodoroTimer";
 import { ROUTES } from "../../../constants";
@@ -104,6 +104,19 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
           ))}
         </div>
 
+        {profile.role === "ADMIN" && (
+          <div className="space-y-0.5">
+            <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide px-2 mb-1">Admin</p>
+            <button
+              onClick={() => { navigate(ROUTES.AdminPanel); setOpen(false); }}
+              className={navItemClass(pathname === ROUTES.AdminPanel)}
+            >
+              <ShieldCheck size={16} />
+              Admin Panel
+            </button>
+          </div>
+        )}
+
         <div className="xl:hidden">
           <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide px-2 mb-2">Focus Timer</p>
           <PomodoroTimer />
@@ -182,6 +195,19 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
               </button>
             ))}
           </div>
+
+          {profile.role === "ADMIN" && (
+            <div className="space-y-0.5">
+              <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide px-2 mb-1">Admin</p>
+              <button
+                onClick={() => navigate(ROUTES.AdminPanel)}
+                className={navItemClass(pathname === ROUTES.AdminPanel)}
+              >
+                <ShieldCheck size={16} />
+                Admin Panel
+              </button>
+            </div>
+          )}
         </nav>
 
         <div className="border-t border-gray-200 dark:border-gray-700">
