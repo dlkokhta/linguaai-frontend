@@ -69,15 +69,15 @@ export const TensesOverviewPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col xl:flex-row dark:bg-gray-900">
+    <div className="h-screen overflow-hidden flex flex-col xl:flex-row dark:bg-gray-900">
       <ProfileLeftSidebar
         onLogout={handleLogout}
         profile={profile ?? { firstname: null, lastname: null, email: "", role: "REGULAR", picture: null }}
         getInitials={getInitials}
       />
 
-      <div className="flex-1 flex min-h-screen">
-        <div className="flex-1 min-w-0 bg-gray-50 dark:bg-gray-900">
+      <div className="flex-1 flex h-full overflow-hidden">
+        <div className="tenses-scroll flex-1 min-w-0 overflow-y-auto bg-gray-50 dark:bg-gray-900">
           <main className="px-4 sm:px-6 py-6 max-w-2xl mx-auto space-y-6">
 
             <div className="flex items-center gap-2">
