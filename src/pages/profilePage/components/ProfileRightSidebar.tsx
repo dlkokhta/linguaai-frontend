@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Pencil } from "lucide-react";
 import { PomodoroTimer } from "../../../components/PomodoroTimer";
 import { TranslateWordWidget } from "../../../components/TranslateWordWidget";
-import { axiosInstance } from "../../../context/AuthContext";
+import { axiosInstance, useAuth } from "../../../context/AuthContext";
 
 interface WeeklyProgress {
   sentenceGoal: number | null;
@@ -12,16 +12,18 @@ interface WeeklyProgress {
 }
 
 export const ProfileRightSidebar = () => {
+  const { accessToken } = useAuth();
   const [progress, setProgress] = useState<WeeklyProgress | null>(null);
   const [setting, setSetting] = useState(false);
   const [sentenceInput, setSentenceInput] = useState("");
   const [wordInput, setWordInput] = useState("");
 
   useEffect(() => {
+    if (!accessToken) return;
     axiosInstance.get<WeeklyProgress>("/weekly-goal")
       .then((res) => setProgress(res.data))
       .catch(() => {});
-  }, []);
+  }, [accessToken]);
 
   const handleSave = async () => {
     const sentenceGoal = parseInt(sentenceInput);

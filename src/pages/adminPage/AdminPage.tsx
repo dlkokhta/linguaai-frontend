@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth, axiosInstance } from "../../context/AuthContext";
-import { ProfileLeftSidebar } from "../profilePage/components/ProfileLeftSidebar";
+import { axiosInstance } from "../../context/AuthContext";
 
 interface User {
   id: string;
@@ -20,27 +19,6 @@ export const AdminPage = () => {
   const [confirmingUser, setConfirmingUser] = useState<User | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { setAccessToken, profile } = useAuth();
-
-  const handleLogout = async () => {
-    try {
-      await axiosInstance.post("/auth/logout");
-    } catch {
-      // ignore
-    } finally {
-      setAccessToken(null);
-      navigate("/login");
-    }
-  };
-
-  const getInitials = () => {
-    if (profile?.firstname && profile?.lastname) {
-      return `${profile.firstname[0]}${profile.lastname[0]}`.toUpperCase();
-    }
-    if (profile?.firstname) return profile.firstname[0].toUpperCase();
-    if (profile?.email) return profile.email[0].toUpperCase();
-    return "?";
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,7 +69,7 @@ export const AdminPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col xl:flex-row dark:bg-gray-900">
+    <div className="tenses-scroll flex-1 min-w-0 overflow-y-auto bg-gray-50 dark:bg-gray-900">
       {confirmingUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-500 bg-opacity-75">
           <div className="w-full max-w-md mx-4 rounded bg-white dark:bg-gray-800 p-6 shadow-lg">
@@ -119,14 +97,7 @@ export const AdminPage = () => {
         </div>
       )}
 
-      <ProfileLeftSidebar
-        onLogout={handleLogout}
-        profile={profile}
-        getInitials={getInitials}
-      />
-
-      <div className="flex-1 min-h-screen bg-gray-50 dark:bg-gray-900">
-        <main className="px-4 sm:px-6 py-6 max-w-6xl mx-auto">
+      <main className="px-4 sm:px-6 py-6 max-w-6xl mx-auto">
           <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6">Admin Panel</h1>
 
           <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-x-auto">
@@ -200,7 +171,6 @@ export const AdminPage = () => {
             )}
           </div>
         </main>
-      </div>
     </div>
   );
 };
