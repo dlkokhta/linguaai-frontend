@@ -55,7 +55,7 @@ export const TranslateWordWidget = () => {
         setToast("Word saved!");
       }
     } catch {
-      // ignore
+      setToast("Failed to save. Please try again.");
     } finally {
       setSaving(false);
     }

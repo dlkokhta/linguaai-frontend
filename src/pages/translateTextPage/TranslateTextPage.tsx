@@ -60,7 +60,7 @@ export const TranslateTextPage = () => {
       setSelectedText("");
       setToast(isWord ? "Word saved!" : "Sentence saved!");
     } catch {
-      // ignore
+      setToast("Failed to save. Please try again.");
     } finally {
       setSaving(false);
     }
