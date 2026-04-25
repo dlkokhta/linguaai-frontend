@@ -37,32 +37,32 @@ function renderProtectedRoute(requiredRole?: string) {
 }
 
 describe('ProtectedRoute', () => {
-  it('renders nothing while loading', () => {
-    mockedUseAuth.mockReturnValue({ accessToken: null, setAccessToken: vi.fn(), isLoading: true });
-    const { container } = renderProtectedRoute();
-    expect(container).toBeEmptyDOMElement();
+  it('redirects to /login while loading when not previously logged in', () => {
+    mockedUseAuth.mockReturnValue({ accessToken: null, setAccessToken: vi.fn(), isLoading: true, profile: null, setProfile: vi.fn() });
+    renderProtectedRoute();
+    expect(screen.getByText('Login Page')).toBeInTheDocument();
   });
 
   it('redirects to /login when there is no access token', () => {
-    mockedUseAuth.mockReturnValue({ accessToken: null, setAccessToken: vi.fn(), isLoading: false });
+    mockedUseAuth.mockReturnValue({ accessToken: null, setAccessToken: vi.fn(), isLoading: false, profile: null, setProfile: vi.fn() });
     renderProtectedRoute();
     expect(screen.getByText('Login Page')).toBeInTheDocument();
   });
 
   it('renders children when access token is present', () => {
-    mockedUseAuth.mockReturnValue({ accessToken: USER_TOKEN, setAccessToken: vi.fn(), isLoading: false });
+    mockedUseAuth.mockReturnValue({ accessToken: USER_TOKEN, setAccessToken: vi.fn(), isLoading: false, profile: null, setProfile: vi.fn() });
     renderProtectedRoute();
     expect(screen.getByText('Protected Content')).toBeInTheDocument();
   });
 
   it('redirects to /items when token role does not match requiredRole', () => {
-    mockedUseAuth.mockReturnValue({ accessToken: USER_TOKEN, setAccessToken: vi.fn(), isLoading: false });
+    mockedUseAuth.mockReturnValue({ accessToken: USER_TOKEN, setAccessToken: vi.fn(), isLoading: false, profile: null, setProfile: vi.fn() });
     renderProtectedRoute('ADMIN');
     expect(screen.getByText('Items Page')).toBeInTheDocument();
   });
 
   it('renders children when token role matches requiredRole', () => {
-    mockedUseAuth.mockReturnValue({ accessToken: ADMIN_TOKEN, setAccessToken: vi.fn(), isLoading: false });
+    mockedUseAuth.mockReturnValue({ accessToken: ADMIN_TOKEN, setAccessToken: vi.fn(), isLoading: false, profile: null, setProfile: vi.fn() });
     renderProtectedRoute('ADMIN');
     expect(screen.getByText('Protected Content')).toBeInTheDocument();
   });

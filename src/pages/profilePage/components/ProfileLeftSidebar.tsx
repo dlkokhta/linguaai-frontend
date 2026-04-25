@@ -68,7 +68,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
 
   const DrawerContent = () => (
     <>
-      <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto">
+      <nav className="tenses-scroll flex-1 px-3 py-4 space-y-4 overflow-y-auto">
         <div className="space-y-0.5">
           <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide px-2 mb-1">Account</p>
           {accountItems.map((item) => (
@@ -175,7 +175,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
           <span className="font-semibold text-gray-900 dark:text-white">LinguaAI</span>
         </div>
 
-        <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto">
+        <nav className="tenses-scroll flex-1 px-3 py-4 space-y-4 overflow-y-auto">
           <div className="space-y-0.5">
             <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide px-2 mb-1">Account</p>
             {accountItems.map((item) => (

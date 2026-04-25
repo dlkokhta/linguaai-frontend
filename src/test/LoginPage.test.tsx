@@ -25,6 +25,8 @@ function renderLoginPage() {
     accessToken: null,
     setAccessToken: mockSetAccessToken,
     isLoading: false,
+    profile: null,
+    setProfile: vi.fn(),
   });
   return render(
     <MemoryRouter>
