@@ -1,59 +1,165 @@
+import { useEffect, useState } from "react";
+import { Pencil } from "lucide-react";
 import { PomodoroTimer } from "../../../components/PomodoroTimer";
 import { TranslateWordWidget } from "../../../components/TranslateWordWidget";
+import { axiosInstance } from "../../../context/AuthContext";
+
+interface WeeklyProgress {
+  sentenceGoal: number | null;
+  wordGoal: number | null;
+  sentencesThisWeek: number;
+  wordsThisWeek: number;
+}
 
 export const ProfileRightSidebar = () => {
+  const [progress, setProgress] = useState<WeeklyProgress | null>(null);
+  const [setting, setSetting] = useState(false);
+  const [sentenceInput, setSentenceInput] = useState("");
+  const [wordInput, setWordInput] = useState("");
+
+  useEffect(() => {
+    axiosInstance.get<WeeklyProgress>("/weekly-goal")
+      .then((res) => setProgress(res.data))
+      .catch(() => {});
+  }, []);
+
+  const handleSave = async () => {
+    const sentenceGoal = parseInt(sentenceInput);
+    const wordGoal = parseInt(wordInput);
+    if (!sentenceGoal || !wordGoal || sentenceGoal < 1 || wordGoal < 1) return;
+
+    try {
+      await axiosInstance.post("/weekly-goal", { sentenceGoal, wordGoal });
+      const res = await axiosInstance.get<WeeklyProgress>("/weekly-goal");
+      setProgress(res.data);
+      setSetting(false);
+      setSentenceInput("");
+      setWordInput("");
+    } catch {}
+  };
+
+  const sentencePct = progress?.sentenceGoal
+    ? Math.min(100, Math.round((progress.sentencesThisWeek / progress.sentenceGoal) * 100))
+    : 0;
+
+  const wordPct = progress?.wordGoal
+    ? Math.min(100, Math.round((progress.wordsThisWeek / progress.wordGoal) * 100))
+    : 0;
+
+  const goalIsSet = progress?.sentenceGoal !== null && progress?.sentenceGoal !== undefined;
+
   return (
     <aside className="hidden xl:flex xl:w-72 xl:mr-20 flex-col sticky top-0 h-screen border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shrink-0 overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none]">
       <div className="flex flex-col gap-3 p-3">
 
-        {/* Focus Timer (replaces Word of the Day) */}
         <PomodoroTimer />
 
-        {/* Word of the Day — kept for later, temporarily replaced by Focus Timer
-        <div className="rounded-2xl bg-[#0a2218] p-4 text-white">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-300 mb-2">Word of the Day</p>
-          <h3 className="text-2xl font-serif font-bold mb-0.5">Eloquent</h3>
-          <p className="text-sm italic text-emerald-300 mb-2">adjective</p>
-          <p className="text-xs leading-relaxed text-emerald-100 mb-3">
-            Fluent and persuasive in speaking or writing; clearly expressing ideas.
-          </p>
-          <blockquote className="border-l-2 border-emerald-400 pl-3 text-xs italic text-emerald-200">
-            "She gave an eloquent speech that moved the entire audience."
-          </blockquote>
-        </div>
-        */}
-
-        {/* This Week */}
+        {/* Weekly Goal widget */}
         <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500 mb-3">This Week</p>
+
+          {/* Header */}
+          <div className="flex items-center justify-between mb-3">
+            {goalIsSet ? (
+              <>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500">Weekly Goal</p>
+                <button
+                  onClick={() => {
+                    setSentenceInput(String(progress?.sentenceGoal ?? ""));
+                    setWordInput(String(progress?.wordGoal ?? ""));
+                    setSetting(true);
+                  }}
+                  className="cursor-pointer p-1 rounded-lg text-gray-400 hover:text-emerald-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  title="Edit goal"
+                >
+                  <Pencil size={12} />
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setSetting(true)}
+                className="cursor-pointer text-[10px] font-semibold uppercase tracking-widest text-emerald-500 hover:text-emerald-400 transition-colors"
+              >
+                Set Weekly Goal
+              </button>
+            )}
+          </div>
+
+          {/* Set goal form */}
+          {setting && (
+            <div className="mb-3 space-y-2">
+              <div>
+                <p className="text-[10px] text-gray-400 dark:text-gray-500 mb-1">Sentence goal</p>
+                <input
+                  type="number"
+                  min={1}
+                  value={sentenceInput}
+                  onChange={(e) => setSentenceInput(e.target.value)}
+                  placeholder="e.g. 50"
+                  className="w-full px-2.5 py-1.5 text-sm bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
+                />
+              </div>
+              <div>
+                <p className="text-[10px] text-gray-400 dark:text-gray-500 mb-1">Word goal</p>
+                <input
+                  type="number"
+                  min={1}
+                  value={wordInput}
+                  onChange={(e) => setWordInput(e.target.value)}
+                  placeholder="e.g. 30"
+                  className="w-full px-2.5 py-1.5 text-sm bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:text-white"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSave}
+                  className="cursor-pointer flex-1 py-1.5 text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => { setSetting(false); setSentenceInput(""); setWordInput(""); }}
+                  className="cursor-pointer flex-1 py-1.5 text-xs font-semibold bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Stats */}
           <div className="grid grid-cols-2 gap-2 mb-4">
             <div className="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-3 text-center">
-              <p className="text-2xl font-bold text-emerald-500">48</p>
+              <p className="text-2xl font-bold text-emerald-500">{progress?.sentencesThisWeek ?? 0}</p>
               <p className="text-[11px] text-gray-500 dark:text-gray-400">Sentences</p>
             </div>
             <div className="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-3 text-center">
-              <p className="text-2xl font-bold text-emerald-500">23</p>
+              <p className="text-2xl font-bold text-emerald-500">{progress?.wordsThisWeek ?? 0}</p>
               <p className="text-[11px] text-gray-500 dark:text-gray-400">New Words</p>
             </div>
           </div>
-          <div className="space-y-2">
-            <div>
-              <div className="flex justify-between text-[11px] text-gray-500 dark:text-gray-400 mb-1">
-                <span>Weekly Goal</span><span>60%</span>
+
+          {/* Progress bars — only shown when goal is set */}
+          {goalIsSet && (
+            <div className="space-y-2">
+              <div>
+                <div className="flex justify-between text-[11px] text-gray-500 dark:text-gray-400 mb-1">
+                  <span>Sentences</span><span>{sentencePct}%</span>
+                </div>
+                <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500 rounded-full transition-all duration-500" style={{ width: `${sentencePct}%` }} />
+                </div>
               </div>
-              <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div className="h-full w-[60%] bg-emerald-500 rounded-full" />
+              <div>
+                <div className="flex justify-between text-[11px] text-gray-500 dark:text-gray-400 mb-1">
+                  <span>Words</span><span>{wordPct}%</span>
+                </div>
+                <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500 rounded-full transition-all duration-500" style={{ width: `${wordPct}%` }} />
+                </div>
               </div>
             </div>
-            <div>
-              <div className="flex justify-between text-[11px] text-gray-500 dark:text-gray-400 mb-1">
-                <span>Practice Sessions</span><span>80%</span>
-              </div>
-              <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div className="h-full w-[80%] bg-emerald-500 rounded-full" />
-              </div>
-            </div>
-          </div>
+          )}
+
         </div>
 
         <TranslateWordWidget />
