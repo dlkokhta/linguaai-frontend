@@ -1,8 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import { Layers, BookMarked, Sparkles, Trophy, CalendarClock } from "lucide-react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Layers } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
-import { ROUTES } from "../../constants";
+import { getErrorMessage } from "../../types/errors";
+import { FlashcardsStart } from "./components/FlashcardsStart";
+import { FlashcardsSession } from "./components/FlashcardsSession";
+import { FlashcardsSummary } from "./components/FlashcardsSummary";
 
 export interface FlashcardStats {
   due: number;
@@ -11,9 +14,45 @@ export interface FlashcardStats {
   total: number;
 }
 
+export interface FlashcardExample {
+  en: string;
+  ka: string;
+}
+
+export type Grade = "AGAIN" | "GOOD" | "EASY";
+
+export interface QueueCard {
+  id: string;
+  cardType: "WORD" | "SENTENCE";
+  savedWord: {
+    id: string;
+    word: string;
+    translation: string;
+    examples: FlashcardExample[];
+  } | null;
+  savedSentence: { id: string; en: string; ka: string; topic: string } | null;
+  preview: { again: number; good: number; easy: number };
+}
+
+export interface GradeCounts {
+  again: number;
+  good: number;
+  easy: number;
+}
+
+type Screen = "start" | "session" | "done";
+
 export const FlashcardsPage = () => {
-  const navigate = useNavigate();
   const { accessToken } = useAuth();
+  const queryClient = useQueryClient();
+
+  const [screen, setScreen] = useState<Screen>("start");
+  const [cards, setCards] = useState<QueueCard[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [counts, setCounts] = useState<GradeCounts>({ again: 0, good: 0, easy: 0 });
+  const [starting, setStarting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const { data: stats, isPending } = useQuery({
     queryKey: ["flashcard-stats"],
@@ -22,12 +61,65 @@ export const FlashcardsPage = () => {
     enabled: !!accessToken,
   });
 
-  const tiles = [
-    { label: "Due today", value: stats?.due ?? 0, icon: <CalendarClock size={18} className="text-emerald-500" /> },
-    { label: "New", value: stats?.new ?? 0, icon: <Sparkles size={18} className="text-sky-500" /> },
-    { label: "Learned", value: stats?.learned ?? 0, icon: <Trophy size={18} className="text-amber-500" /> },
-    { label: "Total cards", value: stats?.total ?? 0, icon: <BookMarked size={18} className="text-gray-400" /> },
-  ];
+  const refreshStats = () =>
+    queryClient.invalidateQueries({ queryKey: ["flashcard-stats"] });
+
+  const startSession = async () => {
+    setStarting(true);
+    setError(null);
+    try {
+      const { data } = await axiosInstance.get<QueueCard[]>("/flashcards/queue");
+      if (data.length === 0) {
+        refreshStats();
+        return;
+      }
+      setCards(data);
+      setCurrentIndex(0);
+      setCounts({ again: 0, good: 0, easy: 0 });
+      setScreen("session");
+    } catch (err) {
+      setError(getErrorMessage(err, "Could not load your cards. Please try again."));
+    } finally {
+      setStarting(false);
+    }
+  };
+
+  const handleGrade = async (grade: Grade) => {
+    const card = cards[currentIndex];
+    setSubmitting(true);
+    setError(null);
+    try {
+      await axiosInstance.post(`/flashcards/${card.id}/answer`, { grade });
+
+      const key = grade.toLowerCase() as keyof GradeCounts;
+      setCounts((c) => ({ ...c, [key]: c[key] + 1 }));
+
+      // "Again" cards come back at the end of the session (repetitions reset to 0)
+      let queue = cards;
+      if (grade === "AGAIN") {
+        queue = [...cards, { ...card, preview: { again: 0, good: 1, easy: 3 } }];
+        setCards(queue);
+      }
+
+      if (currentIndex + 1 >= queue.length) {
+        refreshStats();
+        setScreen("done");
+      } else {
+        setCurrentIndex((i) => i + 1);
+      }
+    } catch (err) {
+      setError(getErrorMessage(err, "Could not save your answer. Please try again."));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const restart = () => {
+    setScreen("start");
+    setError(null);
+  };
+
+  const currentCard = cards[currentIndex];
 
   return (
     <div className="tenses-scroll flex-1 min-w-0 overflow-y-auto bg-gray-50 dark:bg-gray-900">
@@ -37,54 +129,29 @@ export const FlashcardsPage = () => {
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Flashcards</h1>
         </div>
 
-        {isPending && (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-10 text-center">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
-          </div>
+        {screen === "start" && (
+          <FlashcardsStart
+            stats={stats}
+            isPending={isPending}
+            starting={starting}
+            error={error}
+            onStart={startSession}
+          />
         )}
 
-        {!isPending && stats && stats.total === 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
-            <div className="text-center py-8">
-              <Layers size={32} className="mx-auto mb-3 text-gray-300 dark:text-gray-600" />
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Your deck is empty — every word and sentence you save becomes a flashcard.
-              </p>
-              <button
-                onClick={() => navigate(ROUTES.TranslateWord)}
-                className="cursor-pointer mt-4 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all"
-              >
-                Go to Translate Word
-              </button>
-            </div>
-          </div>
+        {screen === "session" && currentCard && (
+          <FlashcardsSession
+            key={`${currentCard.id}-${currentIndex}`}
+            card={currentCard}
+            currentIndex={currentIndex}
+            total={cards.length}
+            submitting={submitting}
+            error={error}
+            onGrade={handleGrade}
+          />
         )}
 
-        {!isPending && stats && stats.total > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 space-y-5">
-            <div className="grid grid-cols-2 gap-3">
-              {tiles.map((tile) => (
-                <div
-                  key={tile.label}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700"
-                >
-                  {tile.icon}
-                  <div>
-                    <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{tile.value}</p>
-                    <p className="text-xs text-gray-400">{tile.label}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <button
-              disabled
-              className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium rounded-xl opacity-50 cursor-not-allowed"
-            >
-              Start review — coming soon
-            </button>
-          </div>
-        )}
+        {screen === "done" && <FlashcardsSummary counts={counts} onRestart={restart} />}
       </main>
     </div>
   );
