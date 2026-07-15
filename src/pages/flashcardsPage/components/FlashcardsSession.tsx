@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Volume2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Undo2, Volume2 } from "lucide-react";
 import { speakText } from "../../../utils/audio";
 import type { Grade, QueueCard } from "../FlashcardsPage";
 
@@ -10,13 +10,50 @@ interface Props {
   submitting: boolean;
   error: string | null;
   onGrade: (grade: Grade) => void;
+  canUndo: boolean;
+  onUndo: () => void;
 }
+
+const KEY_GRADES: Record<string, Grade> = {
+  "1": "AGAIN",
+  "2": "GOOD",
+  "3": "EASY",
+};
 
 const formatInterval = (days: number) =>
   days === 0 ? "now" : days === 1 ? "1 day" : `${days} days`;
 
-export const FlashcardsSession = ({ card, currentIndex, total, submitting, error, onGrade }: Props) => {
+export const FlashcardsSession = ({
+  card,
+  currentIndex,
+  total,
+  submitting,
+  error,
+  onGrade,
+  canUndo,
+  onUndo,
+}: Props) => {
   const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (e.repeat || target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) {
+        return;
+      }
+      if (!revealed && e.code === "Space") {
+        e.preventDefault();
+        setRevealed(true);
+        return;
+      }
+      if (revealed && !submitting && KEY_GRADES[e.key]) {
+        onGrade(KEY_GRADES[e.key]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [revealed, submitting, onGrade]);
 
   const front = card.cardType === "WORD" ? card.savedWord?.word : card.savedSentence?.en;
   const back = card.cardType === "WORD" ? card.savedWord?.translation : card.savedSentence?.ka;
@@ -48,7 +85,19 @@ export const FlashcardsSession = ({ card, currentIndex, total, submitting, error
       <div>
         <div className="flex justify-between text-xs text-gray-400 mb-1">
           <span>{currentIndex + 1} / {total}</span>
-          <span>{total - currentIndex - 1} left</span>
+          <div className="flex items-center gap-3">
+            {canUndo && (
+              <button
+                type="button"
+                onClick={onUndo}
+                className="cursor-pointer inline-flex items-center gap-1 hover:text-emerald-500 transition-colors"
+              >
+                <Undo2 size={12} />
+                Undo
+              </button>
+            )}
+            <span>{total - currentIndex - 1} left</span>
+          </div>
         </div>
         <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           <div
@@ -121,6 +170,10 @@ export const FlashcardsSession = ({ card, currentIndex, total, submitting, error
             )}
           </>
         )}
+
+        <p className="hidden sm:block text-center text-[11px] text-gray-400">
+          {revealed ? "1 — Again · 2 — Good · 3 — Easy" : "Press Space to show the answer"}
+        </p>
       </div>
     </div>
   );

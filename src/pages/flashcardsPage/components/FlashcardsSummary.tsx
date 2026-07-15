@@ -1,12 +1,14 @@
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Undo2 } from "lucide-react";
 import type { GradeCounts } from "../FlashcardsPage";
 
 interface Props {
   counts: GradeCounts;
   onRestart: () => void;
+  canUndo: boolean;
+  onUndo: () => void;
 }
 
-export const FlashcardsSummary = ({ counts, onRestart }: Props) => {
+export const FlashcardsSummary = ({ counts, onRestart, canUndo, onUndo }: Props) => {
   const total = counts.again + counts.good + counts.easy;
 
   const message =
@@ -51,6 +53,17 @@ export const FlashcardsSummary = ({ counts, onRestart }: Props) => {
         <RotateCcw size={15} />
         Back to overview
       </button>
+
+      {canUndo && (
+        <button
+          type="button"
+          onClick={onUndo}
+          className="cursor-pointer mx-auto flex items-center gap-1 text-xs text-gray-400 hover:text-emerald-500 transition-colors"
+        >
+          <Undo2 size={12} />
+          Undo last answer
+        </button>
+      )}
     </div>
   );
 };

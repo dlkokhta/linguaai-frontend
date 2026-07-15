@@ -53,6 +53,7 @@ export const FlashcardsPage = () => {
   const [starting, setStarting] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastGrade, setLastGrade] = useState<Grade | null>(null);
 
   const { data: stats, isPending } = useQuery({
     queryKey: ["flashcard-stats"],
@@ -76,6 +77,7 @@ export const FlashcardsPage = () => {
       setCards(data);
       setCurrentIndex(0);
       setCounts({ again: 0, good: 0, easy: 0 });
+      setLastGrade(null);
       setScreen("session");
     } catch (err) {
       setError(getErrorMessage(err, "Could not load your cards. Please try again."));
@@ -85,6 +87,7 @@ export const FlashcardsPage = () => {
   };
 
   const handleGrade = async (grade: Grade) => {
+    if (submitting) return;
     const card = cards[currentIndex];
     setSubmitting(true);
     setError(null);
@@ -93,6 +96,7 @@ export const FlashcardsPage = () => {
 
       const key = grade.toLowerCase() as keyof GradeCounts;
       setCounts((c) => ({ ...c, [key]: c[key] + 1 }));
+      setLastGrade(grade);
 
       // "Again" cards come back at the end of the session (repetitions reset to 0)
       let queue = cards;
@@ -112,6 +116,24 @@ export const FlashcardsPage = () => {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  // One-level undo: brings the card back so it can be re-graded. The first
+  // answer was already saved on the backend; re-grading corrects the schedule.
+  const undoLastGrade = () => {
+    if (!lastGrade || submitting) return;
+    const key = lastGrade.toLowerCase() as keyof GradeCounts;
+    setCounts((c) => ({ ...c, [key]: c[key] - 1 }));
+    if (lastGrade === "AGAIN") {
+      setCards((c) => c.slice(0, -1));
+    }
+    if (screen === "done") {
+      setScreen("session");
+    } else {
+      setCurrentIndex((i) => i - 1);
+    }
+    setLastGrade(null);
+    setError(null);
   };
 
   const restart = () => {
@@ -148,10 +170,19 @@ export const FlashcardsPage = () => {
             submitting={submitting}
             error={error}
             onGrade={handleGrade}
+            canUndo={!!lastGrade}
+            onUndo={undoLastGrade}
           />
         )}
 
-        {screen === "done" && <FlashcardsSummary counts={counts} onRestart={restart} />}
+        {screen === "done" && (
+          <FlashcardsSummary
+            counts={counts}
+            onRestart={restart}
+            canUndo={!!lastGrade}
+            onUndo={undoLastGrade}
+          />
+        )}
       </main>
     </div>
   );
