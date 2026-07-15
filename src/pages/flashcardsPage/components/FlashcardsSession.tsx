@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Undo2, Volume2 } from "lucide-react";
+import { Trash2, Undo2, Volume2 } from "lucide-react";
 import { speakText } from "../../../utils/audio";
 import type { Grade, QueueCard } from "../FlashcardsPage";
 
@@ -10,6 +10,7 @@ interface Props {
   submitting: boolean;
   error: string | null;
   onGrade: (grade: Grade) => void;
+  onSuspend: () => void;
   canUndo: boolean;
   onUndo: () => void;
 }
@@ -30,6 +31,7 @@ export const FlashcardsSession = ({
   submitting,
   error,
   onGrade,
+  onSuspend,
   canUndo,
   onUndo,
 }: Props) => {
@@ -168,6 +170,18 @@ export const FlashcardsSession = ({
             {error && (
               <p className="text-sm text-red-500 text-center" role="alert">{error}</p>
             )}
+
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={onSuspend}
+                disabled={submitting}
+                className="cursor-pointer inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50 disabled:cursor-wait"
+              >
+                <Trash2 size={13} />
+                Remove from deck
+              </button>
+            </div>
           </>
         )}
 

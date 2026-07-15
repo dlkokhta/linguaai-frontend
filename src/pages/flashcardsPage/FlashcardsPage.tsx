@@ -118,6 +118,31 @@ export const FlashcardsPage = () => {
     }
   };
 
+  const handleSuspend = async () => {
+    if (submitting) return;
+    const card = cards[currentIndex];
+    setSubmitting(true);
+    setError(null);
+    try {
+      await axiosInstance.patch(`/flashcards/${card.id}/suspend`);
+
+      // The removed card is gone from the deck, so undoing past it would
+      // land on a card that no longer exists — drop the undo state.
+      setLastGrade(null);
+
+      if (currentIndex + 1 >= cards.length) {
+        refreshStats();
+        setScreen("done");
+      } else {
+        setCurrentIndex((i) => i + 1);
+      }
+    } catch (err) {
+      setError(getErrorMessage(err, "Could not remove the card. Please try again."));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   // One-level undo: brings the card back so it can be re-graded. The first
   // answer was already saved on the backend; re-grading corrects the schedule.
   const undoLastGrade = () => {
@@ -170,6 +195,7 @@ export const FlashcardsPage = () => {
             submitting={submitting}
             error={error}
             onGrade={handleGrade}
+            onSuspend={handleSuspend}
             canUndo={!!lastGrade}
             onUndo={undoLastGrade}
           />
