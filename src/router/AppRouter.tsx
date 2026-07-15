@@ -20,6 +20,7 @@ import { TranslateWordPage } from "../pages/translateWordPage";
 import { TranslateTextPage } from "../pages/translateTextPage";
 import { SavedWordsPage } from "../pages/savedWordsPage";
 import { VocabularyQuizPage } from "../pages/vocabularyQuizPage";
+import { FlashcardsPage } from "../pages/flashcardsPage";
 import { TensesOverviewPage, TenseDetailPage } from "../pages/tensesPage";
 import { TensesQuizPage } from "../pages/tensesQuizPage";
 import { TensePracticePage } from "../pages/tensePracticePage";
@@ -51,6 +52,7 @@ export const AppRouter = () => {
         <Route path={ROUTES.SavedSentences} element={<SavedSentencesPage />} />
         <Route path={ROUTES.SavedWords} element={<SavedWordsPage />} />
         <Route path={ROUTES.VocabularyQuiz} element={<VocabularyQuizPage />} />
+        <Route path={ROUTES.Flashcards} element={<FlashcardsPage />} />
         <Route path={ROUTES.TranslateWord} element={<TranslateWordPage />} />
         <Route path={ROUTES.TranslateText} element={<TranslateTextPage />} />
         <Route path={ROUTES.Tenses} element={<TensesOverviewPage />} />

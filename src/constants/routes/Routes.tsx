@@ -16,6 +16,7 @@ export const ROUTES = {
   TranslateText: "/translate-text",
   SavedWords: "/saved-words",
   VocabularyQuiz: "/vocabulary-quiz",
+  Flashcards: "/flashcards",
   Tenses: "/tenses",
   TenseDetail: "/tenses/:tenseId",
   TensesQuiz: "/tenses-quiz",

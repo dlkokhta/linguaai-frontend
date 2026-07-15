@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Bookmark, BookMarked, BrainCircuit, FileText, GraduationCap, Languages,
-  LayoutDashboard, LogOut, Menu, PenLine, Settings, ShieldCheck, Trophy, Wand2, X,
+  Layers, LayoutDashboard, LogOut, Menu, PenLine, Settings, ShieldCheck, Trophy, Wand2, X,
 } from "lucide-react";
 import { PomodoroTimer } from "../../../components/PomodoroTimer";
 import { ROUTES } from "../../../constants";
@@ -45,6 +45,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
     { route: ROUTES.TranslateText,     label: "Translate Text",     icon: <FileText size={16} /> },
     { route: ROUTES.SavedWords,        label: "Saved Words",        icon: <BookMarked size={16} /> },
     { route: ROUTES.VocabularyQuiz,    label: "Vocabulary Quiz",    icon: <BrainCircuit size={16} /> },
+    { route: ROUTES.Flashcards,        label: "Flashcards",         icon: <Layers size={16} /> },
     { route: ROUTES.Tenses,            label: "Tenses",             icon: <GraduationCap size={16} /> },
     { route: ROUTES.TensesQuiz,        label: "Tenses Quiz",        icon: <Trophy size={16} /> },
     { route: ROUTES.TensePractice,    label: "Tense Practice",     icon: <PenLine size={16} /> },
