@@ -22,7 +22,15 @@ export const FlashcardsStart = ({ stats, isPending, starting, error, onStart }: 
     );
   }
 
-  if (!stats) return null;
+  if (!stats) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-10 text-center">
+        <p className="text-sm text-red-500" role="alert">
+          Could not load your flashcards. Please try refreshing the page.
+        </p>
+      </div>
+    );
+  }
 
   if (stats.total === 0) {
     return (

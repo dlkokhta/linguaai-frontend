@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import {
   Bookmark, BookMarked, BrainCircuit, FileText, GraduationCap, Languages,
   Layers, LayoutDashboard, LogOut, Menu, PenLine, Settings, ShieldCheck, Trophy, Wand2, X,
 } from "lucide-react";
 import { PomodoroTimer } from "../../../components/PomodoroTimer";
 import { ROUTES } from "../../../constants";
+import { axiosInstance, useAuth } from "../../../context/AuthContext";
+import type { FlashcardStats } from "../../flashcardsPage/FlashcardsPage";
 
 interface UserProfile {
   firstname: string | null;
@@ -27,6 +30,15 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
+  const { accessToken } = useAuth();
+
+  const { data: flashcardStats } = useQuery({
+    queryKey: ["flashcard-stats"],
+    queryFn: () =>
+      axiosInstance.get<FlashcardStats>("/flashcards/stats").then((r) => r.data),
+    enabled: !!accessToken,
+  });
+  const dueCount = flashcardStats?.due ?? 0;
 
   const fullName =
     profile?.firstname || profile?.lastname
@@ -45,7 +57,7 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
     { route: ROUTES.TranslateText,     label: "Translate Text",     icon: <FileText size={16} /> },
     { route: ROUTES.SavedWords,        label: "Saved Words",        icon: <BookMarked size={16} /> },
     { route: ROUTES.VocabularyQuiz,    label: "Vocabulary Quiz",    icon: <BrainCircuit size={16} /> },
-    { route: ROUTES.Flashcards,        label: "Flashcards",         icon: <Layers size={16} /> },
+    { route: ROUTES.Flashcards,        label: "Flashcards",         icon: <Layers size={16} />, badge: dueCount },
     { route: ROUTES.Tenses,            label: "Tenses",             icon: <GraduationCap size={16} /> },
     { route: ROUTES.TensesQuiz,        label: "Tenses Quiz",        icon: <Trophy size={16} /> },
     { route: ROUTES.TensePractice,    label: "Tense Practice",     icon: <PenLine size={16} /> },
@@ -101,6 +113,11 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
             >
               {item.icon}
               {item.label}
+              {!!item.badge && (
+                <span className="ml-auto min-w-5 px-1.5 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold text-center">
+                  {item.badge}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -205,6 +222,11 @@ export const ProfileLeftSidebar = ({ activeTab, onTabChange, onLogout, profile, 
               >
                 {item.icon}
                 {item.label}
+                {!!item.badge && (
+                  <span className="ml-auto min-w-5 px-1.5 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold text-center">
+                    {item.badge}
+                  </span>
+                )}
               </button>
             ))}
           </div>
