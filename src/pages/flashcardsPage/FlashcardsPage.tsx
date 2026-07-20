@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Layers } from "lucide-react";
 import { axiosInstance, useAuth } from "../../context/AuthContext";
 import { getErrorMessage } from "../../types/errors";
+import { AddCardForm } from "./components/AddCardForm";
 import { FlashcardsStart } from "./components/FlashcardsStart";
 import { FlashcardsSession } from "./components/FlashcardsSession";
 import { FlashcardsSummary } from "./components/FlashcardsSummary";
@@ -23,7 +24,7 @@ export type Grade = "AGAIN" | "GOOD" | "EASY";
 
 export interface QueueCard {
   id: string;
-  cardType: "WORD" | "SENTENCE";
+  cardType: "WORD" | "SENTENCE" | "CUSTOM";
   savedWord: {
     id: string;
     word: string;
@@ -31,6 +32,8 @@ export interface QueueCard {
     examples: FlashcardExample[];
   } | null;
   savedSentence: { id: string; en: string; ka: string; topic: string } | null;
+  front: string | null;
+  back: string | null;
   preview: { again: number; good: number; easy: number };
 }
 
@@ -177,13 +180,16 @@ export const FlashcardsPage = () => {
         </div>
 
         {screen === "start" && (
-          <FlashcardsStart
-            stats={stats}
-            isPending={isPending}
-            starting={starting}
-            error={error}
-            onStart={startSession}
-          />
+          <>
+            <FlashcardsStart
+              stats={stats}
+              isPending={isPending}
+              starting={starting}
+              error={error}
+              onStart={startSession}
+            />
+            <AddCardForm onAdded={refreshStats} />
+          </>
         )}
 
         {screen === "session" && currentCard && (

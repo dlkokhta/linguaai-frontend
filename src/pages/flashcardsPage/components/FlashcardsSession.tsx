@@ -57,9 +57,16 @@ export const FlashcardsSession = ({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [revealed, submitting, onGrade]);
 
-  const front = card.cardType === "WORD" ? card.savedWord?.word : card.savedSentence?.en;
-  const back = card.cardType === "WORD" ? card.savedWord?.translation : card.savedSentence?.ka;
+  const front =
+    card.cardType === "WORD" ? card.savedWord?.word
+    : card.cardType === "SENTENCE" ? card.savedSentence?.en
+    : card.front;
+  const back =
+    card.cardType === "WORD" ? card.savedWord?.translation
+    : card.cardType === "SENTENCE" ? card.savedSentence?.ka
+    : card.back;
   const examples = card.cardType === "WORD" ? card.savedWord?.examples ?? [] : [];
+  const typeLabel = card.cardType === "WORD" ? "Word" : card.cardType === "SENTENCE" ? "Sentence" : "Card";
 
   const gradeButtons: { grade: Grade; label: string; interval: number; style: string }[] = [
     {
@@ -112,10 +119,10 @@ export const FlashcardsSession = ({
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 sm:p-8 space-y-6">
         <div className="text-center space-y-3">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
-            {card.cardType === "WORD" ? "Word" : "Sentence"} — what does it mean?
+            {typeLabel} — what does it mean?
           </p>
           <div className="flex items-center justify-center gap-2">
-            <p className={`font-bold text-gray-900 dark:text-white ${card.cardType === "WORD" ? "text-3xl" : "text-xl"}`}>
+            <p className={`font-bold text-gray-900 dark:text-white ${card.cardType === "SENTENCE" ? "text-xl" : "text-3xl"}`}>
               {front}
             </p>
             <button
